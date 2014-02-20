@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:emprel="http://www.emprel.gov.br/gap/emac/jsp">
+
+<ui:composition template="/layout/layout.xhtml">
+	
+	<ui:define name="head">
+	<base href="#{facesContext.externalContext.request.scheme}://#{facesContext.externalContext.request.serverName}:#{facesContext.externalContext.request.serverPort}#{facesContext.externalContext.requestContextPath}/" />
+	</ui:define>
+	
+	<ui:define name="content">
+	    
+		<!-- <p:panel header="Login" rendered="#{!loginBean.logged}">
+			<h:panelGroup id="grupo0">
+				<emprel:emacFacelets sistema="ARTR" loginPage="views/login.faces"  loggedPage="AuthenticatorServlet" enableJavascript="true" />
+			</h:panelGroup>
+		</p:panel>
+		 -->
+		<br />
+
+	</ui:define>
+
+</ui:composition>
+</html>

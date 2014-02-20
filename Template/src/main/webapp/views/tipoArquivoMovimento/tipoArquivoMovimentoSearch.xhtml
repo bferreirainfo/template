@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_tipoArquivoMovimento}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{tipoArquivoMovimentoEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_tipoArquivoMovimento}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel  value="#{msgs.campo_id}: " for="filtroId"/>
+					<p:inputMask mask="?99999" id="filtroId" value="#{tipoArquivoMovimentoSearchBean.filter.id}" label="#{msgs.campo_id}" size="5" maxlength="10" />
+					<p:message for="filtroId" />
+					
+					<h:outputLabel value="#{msgs.campo_codigo}: " for="codigo"/>
+					<h:panelGroup>
+						<p:inputText id="codigo" value="#{tipoArquivoMovimentoSearchBean.filter.codigoEquals}" label="#{msgs.campo_codigo}" size="5" maxlength="3" />
+					</h:panelGroup>
+					<p:message for="codigo" showSummary="true" showDetail="false"/>
+					
+					<h:outputLabel value="#{msgs.campo_versao}: " for="versao"/>
+					<h:panelGroup>
+						<p:inputText id="versao" value="#{tipoArquivoMovimentoSearchBean.filter.versaoEquals}" label="#{msgs.campo_versao}" size="4" maxlength="2" />
+					</h:panelGroup>
+					<p:message for="versao" showSummary="true" showDetail="false"/>
+					
+					<h:outputLabel value="#{msgs.campo_descricao}: " for="descricao"/>
+					<h:panelGroup>
+						<p:inputText id="descricao" value="#{tipoArquivoMovimentoSearchBean.filter.descricaoLike}" label="#{msgs.campo_descricao}" size="35" maxlength="32" />
+					</h:panelGroup>
+					<p:message for="descricao" showSummary="true" showDetail="false"/>
+					
+					<h:outputLabel value="#{msgs.campo_tamanho}: " for="tamanho"/>
+					<h:panelGroup>
+						<p:inputText id="tamanho" value="#{tipoArquivoMovimentoSearchBean.filter.tamanhoEquals}" label="#{msgs.campo_tamanho}" size="5" maxlength="3" />
+					</h:panelGroup>
+					<p:message for="tamanho" showSummary="true" showDetail="false"/>
+					
+					<h:outputLabel value="#{msgs.campo_mascara}: " for="mascara"/>
+					<h:panelGroup>
+						<p:inputText id="mascara" value="#{tipoArquivoMovimentoSearchBean.filter.mascaraEquals}" label="#{msgs.campo_mascara}" size="18" maxlength="15" />
+					</h:panelGroup>
+					<p:message for="mascara" showSummary="true" showDetail="false"/>
+					
+					<h:outputLabel value="#{msgs.campo_foraDeSequencia}: " for="campoForaDeSequencia" />
+					<h:panelGroup>
+						<p:selectOneMenu id="campoForaDeSequencia" value="#{tipoArquivoMovimentoSearchBean.filter.foraDeSequenciaEquals}" label="#{msgs.campo_foraDeSequencia}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" itemValue="" />
+							<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+							<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{tipoArquivoMovimentoSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{tipoArquivoMovimentoEditBean.getPageEdit}"
+							actionListener="#{tipoArquivoMovimentoEditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{tipoArquivoMovimentoSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{tipoArquivoMovimentoReportBean.preparaConsultaRelatorio}"
+							rendered="#{tipoArquivoMovimentoSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{tipoArquivoMovimentoSearchBean.procurou}"
+					value="#{tipoArquivoMovimentoSearchBean.dataModel}" rows="#{tipoArquivoMovimentoSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false" >
+	
+					<f:facet name="header">
+						<h:outputText value="#{tipoArquivoMovimentoSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_id}" />
+						</f:facet>
+						<h:outputText value="#{item.id}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_codigo}" />
+						</f:facet>
+						<h:outputText value="#{item.codigo}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_versao}" />
+						</f:facet>
+						<h:outputText value="#{item.versao}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_descricao}" />
+						</f:facet>
+						<h:outputText value="#{item.descricao}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_tamanho}" />
+						</f:facet>
+						<h:outputText value="#{item.tamanho}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_mascara}" />
+						</f:facet>
+						<h:outputText value="#{item.mascara}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_foraDeSequencia}" />
+						</f:facet>
+						<h:outputText value="#{item.foraDeSequencia ? msgs.action_sim : msgs.action_nao}" />
+					</p:column>
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{tipoArquivoMovimentoEditBean.getPageEdit}"
+							actionListener="#{tipoArquivoMovimentoEditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{tipoArquivoMovimentoEditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.campo_tipoArquivoMovimento}?" 
+					header="#{msgs.action_remover} #{msgs.campo_tipoArquivoMovimento}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{tipoArquivoMovimentoSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{tipoArquivoMovimentoEditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_parametroGeral}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{parametroGeralEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_parametroGeral}" />
+		</h1>
+
+		<p:panel header="#{msgs.label_consulta} " footer="#{msgs.label_clique_valor_descricao_para_editar}">
+			<h:form id="formConsulta" prependId="false">
+				<p:toolbar style="margin-top:5px;">
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{parametroGeralReportBean.preparaConsultaRelatorio}"
+							rendered="#{parametroGeralSearchBean.dataModel.rowCount > 0}" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" value="#{parametroGeralSearchBean.dataModel}" 
+					rows="#{parametroGeralSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false" >
+	
+					<f:facet name="header" >
+						<h:outputText value="#{parametroGeralSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_chave}" />
+						</f:facet>
+						<h:outputText value="#{item.chave}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_valor}" />
+						</f:facet>
+						<p:inplace editor="true" >  
+							<p:ajax event="save" onsuccess="#{parametroGeralEditBean.save(item)}"></p:ajax>
+                			<p:inputText value="#{item.valor}" required="true" label="#{msgs.campo_valor}" size="50" maxlength="200" converter="stringCaseSensitiveConverter"/>  
+            			</p:inplace>  
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_descricao}" />
+						</f:facet>
+						<p:inplace editor="true">  
+							<p:ajax event="save" onsuccess="#{parametroGeralEditBean.save(item)}"></p:ajax>
+                			<p:inputText value="#{item.descricao}" required="true" label="#{msgs.campo_descricao}" size="50" maxlength="200"/>  
+            			</p:inplace>
+					</p:column>
+					
+					
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+		<br/> 	
+	</ui:define>
+</ui:composition>

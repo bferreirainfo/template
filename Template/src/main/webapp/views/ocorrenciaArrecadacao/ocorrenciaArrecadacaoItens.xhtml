@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+				<p:panel id="panelItem" header="#{msgs.label_associacoes} - #{!ocorrenciaArrecadacaoEditBean.itemEditMode ? msgs.label_inclusao : msgs.label_edicao}">
+
+					<h:panelGrid columns="3" styleClass="formFields">
+					
+						<h:outputLabel value="#{msgs.campo_faseArrecadacao} (*): " for="campoFaseArrecadacao" />
+						<h:panelGroup>
+							<p:selectOneMenu id="campoFaseArrecadacao" value="#{ocorrenciaArrecadacaoEditBean.item.faseArrecadacao}" label="#{msgs.campo_faseArrecadacao}">
+								<f:selectItem itemLabel="#{msgs.label_selecione}" />
+								<f:selectItems value="#{faseArrecadacaoSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+							</p:selectOneMenu>
+						</h:panelGroup>
+						<p:message for="campoFaseArrecadacao"/>
+						
+						<h:outputLabel value="#{msgs.campo_acaoOcorrencia}: " for="campoAcaoOcorrencia" />
+						<h:panelGroup>
+							<p:selectOneMenu id="campoAcaoOcorrencia" value="#{ocorrenciaArrecadacaoEditBean.item.acaoOcorrencia}" label="#{msgs.campo_acaoOcorrencia}">
+								<f:selectItem itemLabel="#{msgs.label_selecione}" />
+								<f:selectItems value="#{acaoOcorrenciaSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+							</p:selectOneMenu>
+						</h:panelGroup>
+						<p:message for="campoAcaoOcorrencia"/>
+
+					</h:panelGrid>
+
+					<p:toolbar>
+						<p:toolbarGroup align="left">
+
+							<p:commandButton id="addItem" icon="ui-icon-plus"
+								rendered="#{!ocorrenciaArrecadacaoEditBean.itemEditMode}"
+								value="#{msgs.action_adicionar}"
+								label="#{msgs.action_adicionar}"
+								title="#{msgs.action_adicionar}"
+								actionListener="#{ocorrenciaArrecadacaoEditBean.addItem}"
+								process="panelItem" update="panelItem,:globalMessagesPopup" />
+								
+							<p:commandButton id="editItem" icon="ui-icon-disk"
+								rendered="#{ocorrenciaArrecadacaoEditBean.itemEditMode}"
+								value="#{msgs.action_salvar}"
+								label="#{msgs.action_salvar}"
+								title="#{msgs.action_salvar}"
+								actionListener="#{ocorrenciaArrecadacaoEditBean.updateItem}"
+								process="panelItem" update="panelItem,:globalMessagesPopup" />
+
+							<p:spacer width="10" />
+
+							<p:commandButton id="cancelItem" icon="ui-icon-cancel"
+								value="#{msgs.action_cancelar}"
+								label="#{msgs.action_cancelar}"
+								title="#{msgs.action_cancelar}" process="@this"
+								actionListener="#{ocorrenciaArrecadacaoEditBean.cancelItem}" update="panelItem"
+								/>
+
+						</p:toolbarGroup>
+					</p:toolbar>
+
+					<br />
+
+					<p:dataTable id="itemDataTable" var="item" value="#{ocorrenciaArrecadacaoEditBean.entity.listaOcorrenciaFaseArrecadacao}" style="width:100%"  emptyMessage="#{msgs.consulta_vazia}" >
+						<f:facet name="header">
+							<f:facet name="header"><h:outputText value="#{msgs.label_lista_associacoes}" /> </f:facet>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.campo_faseArrecadacao}" />
+								</f:facet>
+								<h:outputText value="#{item.faseArrecadacao.descricao}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.campo_acaoOcorrencia}" />
+								</f:facet>
+								<h:outputText value="#{item.acaoOcorrencia.descricao}" />
+							</p:column>
+							
+							<p:column style="width: 200px; text-align:center">
+								<f:facet name="header">
+									<h:outputText value="#{msgs.label_acoes}" />
+								</f:facet>
+								<p:commandButton actionListener="#{ocorrenciaArrecadacaoEditBean.startEditItem}"
+									icon="ui-icon-folder-open" value="#{msgs.action_editar}" process="@this" 
+									label="#{msgs.action_editar}" title="#{msgs.action_editar}"
+									update=":formEdicao:panelItem" />
+								
+								<p:spacer width="15" />
+								
+								<p:commandButton actionListener="#{ocorrenciaArrecadacaoEditBean.removeItem}"
+									icon="ui-icon-trash" value="#{msgs.action_remover}" process="@this" 
+									label="#{msgs.action_remover}" title="#{msgs.action_remover}"
+									update=":formEdicao:panelItem, :globalMessagesPopup"/>
+
+							</p:column>
+
+						</f:facet>
+					</p:dataTable>
+
+
+				</p:panel>
+
+</ui:composition>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_gerarMovimentoDiarioPCR}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{gerarMovimentoDiarioPCREditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_gerarMovimentoDiarioPCR}" />
+		</h1>
+
+		<p:panel id="panelMovimento" header="#{msgs.label_consulta} ">
+			<h:form id="formConsulta" prependId="false">
+			
+				<p:poll interval="20" listener="#{gerarMovimentoDiarioPCREditBean.verificarStatusGeracaoMovimentoDiarioPCR}" 
+				update=":globalMessages :panelMovimento" />
+			
+				<h:panelGrid columns="3" rendered="#{gerarMovimentoDiarioPCREditBean.dataMovimentoGerado == null}" styleClass="formFields" >
+					
+					<h:outputLabel value="#{msgs.campo_dataUltimoMovimentoGerado}: " for="filtroDataUltimoMovimentoGerado"/>
+					<p:calendar id="filtroDataUltimoMovimentoGerado" value="#{gerarMovimentoDiarioPCREditBean.dataMovimentoGerado}" showButtonPanel="true" pattern="dd/MM/yyyy" label="#{msgs.campo_dataUltimoMovimentoGerado}" size="11"/>
+					<p:message for="filtroDataUltimoMovimentoGerado" />
+					
+				</h:panelGrid>
+			
+				<p:toolbar style="margin-top:5px;" >
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_salvar}"
+							label="#{msgs.action_salvar}"
+							title="#{msgs.action_salvar}"
+							icon="ui-icon-disk"
+							action="#{gerarMovimentoDiarioPCREditBean.salvar}"
+							rendered="#{gerarMovimentoDiarioPCREditBean.dataMovimentoGerado == null}" />
+					
+						<p:commandButton ajax="true" 
+							value="#{msgs.action_gerar_arquivo}"
+							label="#{msgs.action_gerar_arquivo}"
+							title="#{msgs.action_gerar_arquivo}"
+							icon="ui-icon-print"
+							immediate="true"
+							actionListener="#{gerarMovimentoDiarioPCREditBean.gerarArquivo}"
+							update=":panelMovimento,:globalMessages,:globalMessagesPopup"
+							rendered="#{gerarMovimentoDiarioPCREditBean.dataMovimentoGerado != null}" 
+							disabled="#{gerarMovimentoDiarioPCREditBean.processando == true}"/>
+					</p:toolbarGroup>
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" value="#{gerarMovimentoDiarioPCREditBean.listaMovimento}" rendered="#{gerarMovimentoDiarioPCREditBean.dataMovimentoGerado != null}"
+					emptyMessage="#{msgs.consulta_vazia}" >
+	
+					<p:column styleClass="alignRight">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_id}" />
+						</f:facet>
+						<h:outputText value="#{item.orgaoArrecadador.id}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_orgaoArrecadador}" />
+						</f:facet>
+						<h:outputText value="#{item.orgaoArrecadador.descricao}" />
+					</p:column>
+					
+					<p:column styleClass="alignRight">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_quantidadeDocumentoArrecadado}" />
+						</f:facet>
+						<h:outputText value="#{item.quantidadeDocumentoArrecadado}" />
+					</p:column>
+					
+					<p:column styleClass="alignRight">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_valorArrecadado}" />
+						</f:facet>
+						<h:outputText value="#{item.valorArrecadado}" converter="RealConverter"/>
+					</p:column>
+					
+					<p:column styleClass="alignRight">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_quantidadeDocumentoRepassado}" />
+						</f:facet>
+						<h:outputText value="#{item.quantidadeDocumentoRepassado}" />
+					</p:column>
+					
+					<p:column styleClass="alignRight">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_valorRepassado}" />
+						</f:facet>
+						<h:outputText value="#{item.valorRepassado}" converter="RealConverter"/>
+					</p:column>
+					
+					<p:column styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_dataGeracaoMovimento}" />
+						</f:facet>
+						<h:outputText value="#{item.dataGeracaoMovimento}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+		<br/> 	
+	</ui:define>
+</ui:composition>

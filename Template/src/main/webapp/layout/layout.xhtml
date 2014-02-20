@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html
+	xmlns:html="http://www.w3.org/1999/xhtml"
+ 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html" locale="pt_BR">
+	
+	<ui:insert name="view"></ui:insert>
+	
+	<h:head>
+		<title>EMPREL - <ui:insert name="titulo">ARTR</ui:insert></title>
+		
+		<link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+		<link rel="icon" href="img/favicon.ico" type="image/gif" />
+		<script type="text/javascript" src="#{request.contextPath}/js/primefaces_i18n.js"></script>
+		<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/jquery.maskMoney.js"></script>
+		<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/emprel.js"></script>
+		<ui:insert name="head"></ui:insert>
+	</h:head>
+
+	<h:body>
+		
+		<f:loadBundle basename="mensagens" var="msgs" />
+		<div id="master">
+		
+		    <p:ajaxStatus>
+                <f:facet name="start">
+                    <div id="divAjaxLoading"><img src="#{request.contextPath}/img/ajax-loader.gif"/> Carregando...</div>   
+                </f:facet>
+                <f:facet name="complete">  
+                    <h:outputText value="" />  
+                </f:facet>
+            </p:ajaxStatus>
+          
+            <div id="cabecalho">
+            	<h:form id="frmCabecalho">
+	                <p:toolbar rendered="#{loginBean.logged}">
+	                  <p:toolbarGroup align="left">
+	                    
+	                    <p:spacer width="5" height="0"/>
+	                    <h:outputText value="#{loginBean.usuarioGeral ? msgs.label_admin_geral : msgs.campo_usuario}: " />
+	                    <h:outputText value="#{loginBean.usuario.id} - #{loginBean.usuario.nome}" style="font-weight: normal" />
+	                    
+	                  </p:toolbarGroup>
+	                  <p:toolbarGroup align="right" >
+						<p:commandLink value="#{msgs.action_sair}" ajax="false" action="#{loginBean.logout}" /><p:spacer width="5"/>
+	                  </p:toolbarGroup>                  
+	                </p:toolbar>
+                </h:form>
+
+				<table width="100%">
+					<tr>
+						<td align="center"><img src="#{request.contextPath}/img/logoPref.gif" /></td>
+						<td align="center" width="100%" class="ui-widget-header" style="font-size:30px; ">
+							<h:outputLabel value="#{msgs.arrecadacao}"/>
+						</td>
+						<td align="center"><img src="#{request.contextPath}/img/logoEmprel.gif" /></td>
+					</tr>
+				</table>
+
+			</div>            
+                        
+            <ui:include src="../layout/menu.xhtml" />
+			
+			<ui:remove><!-- Deixar os dois tipos de mensagens, pois tem tela que é grande, e não dá para ver a mensagens do
+							p:messages, o p:glowl resolve o problema, pois é mostrado em uma posição absoluta da tela, inde-
+							pendente de onde a rolagem da página está.
+							
+							Talvez se colocar o p:focus funcione com o p:messages. É bom verificar
+			 -->
+			</ui:remove>			
+            <p:messages id="globalMessages" globalOnly="true"/>
+            <p:growl id="globalMessagesPopup" globalOnly="true" life="5000" />
+
+		
+			<div id="content" class="contentStyle">
+
+				<ui:insert name="content"></ui:insert>
+				
+				<!-- adicionado como teste -->
+				<div id="mainFooter">
+					<h:outputLabel value="ver. [@@BUILD_ID@@]" />
+				</div>
+				
+			</div>
+			
+		</div>
+
+	</h:body>
+</f:view>
+
+</html>

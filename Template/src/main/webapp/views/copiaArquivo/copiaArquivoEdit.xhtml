@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_disponibilizar_recepcao}" />
+	</ui:define>
+	
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{copiaArquivoEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all"><h:outputText value="#{msgs.label_disponibilizar_recepcao}" /></h1>
+	
+		<h:form id="formEdicao" prependId="false" enctype="multipart/form-data">
+		
+		<p:panel id="fieldEdicao" footer="#{msgs.label_mensagem_obrigatorios}">
+		
+			<h:panelGrid columns="3" style="font-size: 12px; font-weight: bold;" styleClass="ui-widget">
+				
+				<h:outputLabel  value="#{msgs.campo_arquivo_origem} (*): " for="inputFile"/>
+			  	<h:panelGroup>
+					<p:fileUpload id="inputFile" value="#{copiaArquivoEditBean.entity.arquivoUpload}" mode="simple" />
+				</h:panelGroup>
+				<p:message id="inputFileMsg" for="inputFile" />
+				
+			</h:panelGrid>
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+
+					<p:commandButton ajax="false" id="save" icon="ui-icon-disk"
+						value="#{msgs.action_copiar_arquivo}"
+						action="#{copiaArquivoEditBean.save}"
+						label="#{msgs.action_copiar_arquivo}"
+						title="#{msgs.action_copiar_arquivo}"
+						styleClass="salvar" />
+
+				</p:toolbarGroup>
+			</p:toolbar>
+
+		</p:panel>
+		
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_contatoOrgaoArrecadador}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{contatoOrgaoArrecadadorEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_contatoOrgaoArrecadador}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel  value="#{msgs.campo_id}: " for="filtroId"/>
+					<p:inputMask mask="?99999" id="filtroId" value="#{contatoOrgaoArrecadadorSearchBean.filter.id}" label="#{msgs.campo_id}" size="5" maxlength="10" />
+					<p:message for="filtroId" />
+					
+					<h:outputLabel value="#{msgs.campo_orgaoArrecadador} (*):" for="filtroOrgaoArrecadador" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroOrgaoArrecadador" value="#{contatoOrgaoArrecadadorSearchBean.filter.orgaoArrecadadorEquals}" label="#{msgs.campo_orgaoArrecadador}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{orgaoArrecadadorSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu> 
+					</h:panelGroup>
+					<p:message for="filtroOrgaoArrecadador"/>
+					
+					<h:outputLabel value="#{msgs.campo_nivelHierarquico} (*):" for="filtroNivelHierarquico" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroNivelHierarquico" value="#{contatoOrgaoArrecadadorSearchBean.filter.nivelHierarquicoEquals}" label="#{msgs.campo_nivelHierarquico}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{contatoOrgaoArrecadadorSearchBean.listNivelHierarquico}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu> 
+					</h:panelGroup>
+					<p:message for="filtroNivelHierarquico"/>	
+					
+					<h:outputLabel value="#{msgs.campo_nomeResponsavel}: " for="filtroNomeResponsavel" />
+					<p:inputText id="filtroNomeResponsavel" value="#{contatoOrgaoArrecadadorSearchBean.filter.nomeResponsavelLike}" label="#{msgs.campo_nomeResponsavel}:" size="50" maxlength="80" />
+					<p:message for="filtroNomeResponsavel" />
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{contatoOrgaoArrecadadorSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{contatoOrgaoArrecadadorEditBean.getPageEdit}"
+							actionListener="#{contatoOrgaoArrecadadorEditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{contatoOrgaoArrecadadorSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{contatoOrgaoArrecadadorReportBean.preparaConsultaRelatorio}"
+							rendered="#{contatoOrgaoArrecadadorSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{contatoOrgaoArrecadadorSearchBean.procurou}"
+					value="#{contatoOrgaoArrecadadorSearchBean.dataModel}" rows="#{contatoOrgaoArrecadadorSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false" >
+	
+					<f:facet name="header">
+						<h:outputText value="#{contatoOrgaoArrecadadorSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_id}" />
+						</f:facet>
+						<h:outputText value="#{item.id}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_orgaoArrecadador}" />
+						</f:facet>
+						<h:outputText value="#{item.orgaoArrecadador.descricao}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_nivelHierarquico}" />
+						</f:facet>
+						<h:outputText value="#{item.nivelHierarquicoResponsavel.descricao}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_nomeResponsavel}" />
+						</f:facet>
+						<h:outputText value="#{item.nomeResponsavel}" />
+					</p:column>
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{contatoOrgaoArrecadadorEditBean.getPageEdit}"
+							actionListener="#{contatoOrgaoArrecadadorEditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{contatoOrgaoArrecadadorEditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.campo_contatoOrgaoArrecadador}?" 
+					header="#{msgs.action_remover} #{msgs.campo_contatoOrgaoArrecadador}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{contatoOrgaoArrecadadorSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{contatoOrgaoArrecadadorEditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{!orgaoArrecadadorEditBean.editMode ? msgs.label_inclusao : msgs.label_edicao} #{msgs.label_de} #{msgs.campo_orgaoArrecadador}" />
+	</ui:define>
+	
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{orgaoArrecadadorEditBean.checkPermission}" />
+	
+		<h:form id="formEdicao" prependId="false">
+			
+		<h1 class="title ui-widget-header ui-corner-all"><h:outputText value="#{msgs.campo_orgaoArrecadador}" /></h1>
+		
+		<p:panel id="fieldEdicao" header="#{!orgaoArrecadadorEditBean.editMode ? msgs.label_inclusao: msgs.label_edicao}" footer="#{msgs.label_mensagem_obrigatorios}">
+		
+			<h:panelGrid columns="3" style="font-size: 12px; font-weight: bold;" styleClass="ui-widget">
+
+				<h:outputLabel  value="#{msgs.campo_codigo} (*): " for="campoId"/>
+				<h:panelGroup rendered="#{!formaArrecadacaoEditBean.editMode}">
+					<p:inputMask mask="?9999999999" id="campoId" value="#{orgaoArrecadadorEditBean.entity.id}" size="10" maxlength="10"
+					label="#{msgs.campo_codigo}" disabled="#{orgaoArrecadadorEditBean.editMode}">
+						
+					</p:inputMask>
+					
+				</h:panelGroup>
+				<p:message for="campoId" />
+				
+				<h:outputLabel value="#{msgs.campo_descricao} (*): " for="campoDescricao" />
+				<p:inputText id="campoDescricao" value="#{orgaoArrecadadorEditBean.entity.descricao}" label="#{msgs.campo_descricao}" size="20" maxlength="50" />
+				<p:message for="campoDescricao" />
+				
+				<h:outputLabel value="#{msgs.campo_tipoContratoArrecadacao} (*): " for="campoIdentificadorTipoContrato" />
+				<h:panelGroup>
+					<p:selectOneMenu id="campoIdentificadorTipoContrato" value="#{orgaoArrecadadorEditBean.entity.tipoContratoArrecadacao}" 
+					label="#{msgs.campo_tipoContratoArrecadacao}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" />
+						<f:selectItems value="#{tipoContratoArrecadacaoSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+					</p:selectOneMenu> 
+				</h:panelGroup>
+				<p:message for="campoIdentificadorTipoContrato"/>
+				
+				<h:outputLabel value="#{msgs.campo_indicadorMantenedorContaPrefeitura}: " for="campoIndicadorMantenedorContaPrefeitura" />
+				<h:panelGroup>
+					<p:selectOneMenu id="campoIndicadorMantenedorContaPrefeitura" value="#{orgaoArrecadadorEditBean.entity.indicadorMantenedorContaPrefeitura}" 
+					label="#{msgs.campo_indicadorMantenedorContaPrefeitura}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+					</p:selectOneMenu>
+				</h:panelGroup>
+				<p:message for="campoIndicadorMantenedorContaPrefeitura" showSummary="true" showDetail="false" />
+				
+				<h:outputLabel value="#{msgs.campo_CNPJ} (*): " for="campoCNPJ" />
+				<p:inputMask id="campoCNPJ" value="#{orgaoArrecadadorEditBean.entity.cnpj}" label="#{msgs.campo_CNPJ}" mask="99.999.999/9999-99" 
+				size="21" maxlength="19" converter="cnpjConverter" />
+				<p:message for="campoCNPJ"/>	
+				
+				<h:outputLabel value="#{msgs.campo_inscricaoMunicipal}: " for="campoInscricaoMunicipal" />
+				<p:inputMask id="campoInscricaoMunicipal" mask="9?999999" value="#{orgaoArrecadadorEditBean.entity.inscricaoMunicipal}"
+				size="9" maxlength="7" label="#{msgs.campo_inscricaoMunicipal}" converter="inscricaoMunicipalConverter"/>
+				<p:message for="campoInscricaoMunicipal"/>
+				
+				<h:outputLabel value="#{msgs.campo_logradouro} (*): " for="campoLogradouro" />
+				<p:inputText id="campoLogradouro" value="#{orgaoArrecadadorEditBean.entity.logradouro}" label="#{msgs.campo_logradouro}" 
+				size="20" maxlength="30" />
+				<p:message for="campoLogradouro" />
+				
+				<h:outputLabel value="#{msgs.campo_codigoRepasse} (*): " for="campoCodigoRepasse" />
+				<p:inputText id="campoCodigoRepasse" value="#{orgaoArrecadadorEditBean.entity.codigoRepasse}" label="#{msgs.campo_codigoRepasse}" 
+				size="10" maxlength="20" />
+				<p:message for="campoCodigoRepasse" />
+				
+				<h:outputLabel value="#{msgs.campo_telefonePrincipal} (*): " for="campoTelefonePrincipal" />
+				<p:inputText id="campoTelefonePrincipal" value="#{orgaoArrecadadorEditBean.entity.telefonePrincipal}" label="#{msgs.campo_telefonePrincipal}" 
+				size="14" maxlength="14" />
+				<p:message for="campoTelefonePrincipal" />
+				
+				<h:outputLabel value="#{msgs.campo_telefoneSecundario}: " for="campoTelefoneSecundario" />
+				<p:inputText id="campoTelefoneSecundario" value="#{orgaoArrecadadorEditBean.entity.telefoneSecundario}" label="#{msgs.campo_telefoneSecundario}" 
+				size="14" maxlength="14" />
+				<p:message for="campoTelefoneSecundario" />
+				
+				<h:outputLabel value="#{msgs.campo_numero} (*): " for="campoCampoNumero" />
+				<p:inputText id="campoCampoNumero" value="#{orgaoArrecadadorEditBean.entity.numeroEndereco}" label="#{msgs.campo_numero}" 
+				size="5" maxlength="5" />
+				<p:message for="campoCampoNumero" />
+				
+				<h:outputLabel value="#{msgs.campo_cidade} (*): " for="campoCidade" />
+				<p:inputText id="campoCidade" value="#{orgaoArrecadadorEditBean.entity.nomeCidade}" label="#{msgs.campo_cidade}" 
+				size="20" maxlength="20" />
+				<p:message for="campoCidade" />
+				
+				<h:outputLabel value="#{msgs.campo_siglaUF} (*): " for="campoSiglaUF" />
+				<h:panelGroup>
+					<p:selectOneMenu id="campoSiglaUF" converter="enumConverter" value="#{orgaoArrecadadorEditBean.entity.uf}" 
+					label="#{msgs.campo_siglaUF}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" />
+						<f:selectItems value="#{orgaoArrecadadorSearchBean.listaUF}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+					</p:selectOneMenu>
+				</h:panelGroup>
+				<p:message for="campoSiglaUF"/>
+				
+				<h:outputLabel value="#{msgs.campo_cep} (*): " for="campoCEP" />
+				<p:inputText id="campoCEP" value="#{orgaoArrecadadorEditBean.entity.codigoCEP}" label="#{msgs.campo_cep}" size="5" maxlength="5" />
+				<p:message for="campoCEP" />
+				
+				<h:outputLabel value="#{msgs.campo_sufixoCEP} (*): " for="campoSufixoCEP" />
+				<p:inputText id="campoSufixoCEP" value="#{orgaoArrecadadorEditBean.entity.sufixoCEP}" label="#{msgs.campo_sufixoCEP}" size="3" maxlength="3" />
+				<p:message for="campoSufixoCEP" />
+				
+				<h:outputLabel value="#{msgs.campo_numeroAgencia} (*): " for="campoNumeroAgencia" />
+				<p:inputText id="campoNumeroAgencia" value="#{orgaoArrecadadorEditBean.entity.numeroAgencia}" label="#{msgs.campo_numeroAgencia}" 
+				size="4" maxlength="4" />
+				<p:message for="campoNumeroAgencia" />
+
+						
+				
+			</h:panelGrid>
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+
+					<p:commandButton ajax="false" id="save" icon="ui-icon-disk"
+						value="#{!orgaoArrecadadorEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						action="#{orgaoArrecadadorEditBean.save}"
+						label="#{!orgaoArrecadadorEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						title="#{!orgaoArrecadadorEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						styleClass="salvar" />
+
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton ajax="false" id="cancelar" icon="ui-icon-cancel"
+						value="#{msgs.action_voltar}" title="#{msgs.action_voltar}"
+						label="#{msgs.action_voltar}" action="#{orgaoArrecadadorEditBean.cancel}"
+						immediate="true" styleClass="sair" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+		</p:panel>
+		
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

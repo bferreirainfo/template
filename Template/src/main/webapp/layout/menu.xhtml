@@ -1,0 +1,98 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<h:form rendered="#{loginBean.podeMostrarMenu}">
+		<p:menubar >
+			<p:submenu label="#{msgs.label_cadastros}" rendered="#{segurancaMenuBean.temPermissaoCADASTRO_BASICO}" >
+
+				<p:submenu label="#{msgs.label_codigo_barras}" rendered="#{segurancaMenuBean.temPermissaoCODIGO_BARRAS}" >
+				
+					<p:menuitem value="#{msgs.campo_composicaoIdentificadorDebitoPCR}" action="#{composicaoIdentificadorDebitoPCREditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoCOMPOSICAO_IDENTIFICADOR_DEBITO_PCR}" />
+					<p:menuitem value="#{msgs.campo_identificadorDebitoPCR}" action="#{identificadorDebitoPCREditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoIDENTIFICADOR_DEBITO_PCR}" />
+					<p:menuitem value="#{msgs.campo_modeloDAM}" action="#{modeloDAMEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoMODELO_DAM}" />
+					<p:menuitem value="#{msgs.campo_servicoEmissao}" action="#{servicoEmissaoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoSERVICO_EMISSAO}" />
+					
+				</p:submenu>
+			
+				<p:submenu label="#{msgs.label_orgao_arrecadador}" rendered="#{segurancaMenuBean.temPermissaoORGAO_ARRECADADOR_SUBMENU}" >
+					
+					<p:menuitem value="#{msgs.campo_acaoOcorrencia}" action="#{acaoOcorrenciaEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoACAO_OCORRENCIA}" />
+					<p:menuitem value="#{msgs.campo_agenciaCompensacaoBancaria}" action="#{agenciaCompensacaoBancariaEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoAGENCIA_COMPENSACAO_BANCARIA}" />
+					<p:menuitem value="#{msgs.campo_diaSemMovimento}" action="#{diaSemMovimentoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoDIA_SEM_MOVIMENTO}" />
+					<p:menuitem value="#{msgs.campo_faseArrecadacao}" action="#{faseArrecadacaoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoFASE_ARRECADACAO}" />
+					<p:menuitem value="#{msgs.campo_motivoAusenciaMovimento}" action="#{motivoAusenciaMovimentoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoMOTIVO_AUSENCIA_MOVIMENTO}" />
+					<p:menuitem value="#{msgs.campo_ocorrenciaArrecadacao}" action="#{ocorrenciaArrecadacaoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoOCORRENCIA_ARRECADACAO}" />
+					<p:menuitem value="#{msgs.campo_orgaoArrecadador}" action="#{orgaoArrecadadorEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoORGAO_ARRECADADOR}" />
+					<p:menuitem value="#{msgs.campo_tipoContratoArrecadacao}" action="#{tipoContratoArrecadacaoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoTIPO_CONTRATO_ARRECADACAO}" />
+					<p:menuitem value="#{msgs.campo_orgaoArrecadadorTipoArquivoCompensacaoBancaria}" action="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoORGAO_ARRECADADOR_TIPO_ARQUIVO_MOVIMENTO}" />
+					<p:menuitem value="#{msgs.campo_valorTarifaFormaArrecadacao}" action="#{valorTarifaFormaArrecadacaoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoVALOR_TARIFA_FORMA_ARRECADACAO}" />
+					<p:menuitem value="#{msgs.campo_contatoOrgaoArrecadador}" action="#{contatoOrgaoArrecadadorEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoCONTATO_ORGAO_ARRECADADOR}" />
+				</p:submenu>
+			
+			</p:submenu>
+			
+			<p:submenu label="#{msgs.label_tabelas_externas}" rendered="#{segurancaMenuBean.temPermissaoTABELAS_EXTERNAS}" >
+			
+				<p:submenu label="#{msgs.label_recepcao_envio}" rendered="#{segurancaMenuBean.temPermissaoRECEPCAO_ENVIO}" >
+				
+					<p:menuitem value="#{msgs.label_categoria_lancamento}" action="#{categoriaLancamentoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoCATEGORIA_LANCAMENTO}" />
+					<p:menuitem value="#{msgs.campo_camposRegistroArqMov}" action="#{camposRegistroArqMovEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoCAMPOS_REGISTRO_ARQ_MOV}" />
+					<p:menuitem value="#{msgs.campo_compensacaoBancaria}" action="#{compensacaoBancariaEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoCOMPENSACAO_BANCARIA}" />
+					<p:menuitem value="#{msgs.campo_formaArrecadacao}" action="#{formaArrecadacaoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoFORMA_ARRECADACAO}" />
+					<p:menuitem value="#{msgs.campo_registroTipoArquivoMovimento}" action="#{registroTipoArquivoMovimentoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoREGISTRO_TIPO_ARQUIVO_MOVIMENTO}" />
+					<p:menuitem value="#{msgs.campo_tipoArquivoMovimento}" action="#{tipoArquivoMovimentoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoTIPO_ARQUIVO_MOVIMENTO}" />
+				
+				</p:submenu>
+			
+			</p:submenu>			
+			
+			<p:submenu label="#{msgs.label_gerencial}" rendered="#{segurancaMenuBean.temPermissaoCOPIAR_ARQUIVO or 
+			segurancaMenuBean.temPermissaoGERAR_MOVIMENTO_DIARIO_PCR or segurancaMenuBean.temPermissaoMONITORAR_REMESSA_RETORNO or 
+			segurancaMenuBean.temPermissaoPARAMETRO_GERAL}" >
+				<p:menuitem value="#{msgs.label_disponibilizar_recepcao}" action="copiaArquivoEdit" ajax="false" rendered="#{segurancaMenuBean.temPermissaoCOPIAR_ARQUIVO}" />
+				<p:menuitem value="#{msgs.campo_gerarMovimentoDiarioPCR}" action="#{gerarMovimentoDiarioPCREditBean.iniciar}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoGERAR_MOVIMENTO_DIARIO_PCR}" />
+				<p:menuitem value="#{msgs.campo_monitorarRemessaRetorno}" action="#{monitorarRemessaRetornoEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoMONITORAR_REMESSA_RETORNO}" />
+				<p:menuitem value="#{msgs.campo_parametroGeral}" action="#{parametroGeralEditBean.restart}" ajax="false" rendered="#{segurancaMenuBean.temPermissaoPARAMETRO_GERAL}" />
+			</p:submenu>
+			
+			<p:submenu label="#{msgs.label_emitir_relatorios}" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ARQUIVOS_RECEBIDOS or
+				segurancaMenuBean.temPermissaoRELATORIO_OCORRENCIA_ARQUIVO_MOVIMENTO_BANCO or segurancaMenuBean.temPermissaoRELATORIO_HISTORICO_ARQUIVO_TEXTO or
+				segurancaMenuBean.temPermissaoRELATORIO_OCORRENCIA_RECEBIMENTO_DAM_PAGO or segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_RECEBIMENTO_CAMPO_ARQUIVO or
+				segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_EXTRATO_CONTA_CAMPO_ARQUIVO or segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_SIAFI_CAMPO_ARQUIVO or 
+				segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_SIMPLES_NACIONAL_CAMPO_ARQUIVO or segurancaMenuBean.temPermissaoRELATORIO_CUSTO_SERVICO_BANCARIO or
+				segurancaMenuBean.temPermissaoRELATORIO_EFETIVO_ARRECADADO or segurancaMenuBean.temPermissaoRELATORIO_EFETIVO_REPASSADO}" >
+				<p:submenu label="#{msgs.label_arquivos_entrada}" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ARQUIVOS_RECEBIDOS or
+				segurancaMenuBean.temPermissaoRELATORIO_OCORRENCIA_ARQUIVO_MOVIMENTO_BANCO or segurancaMenuBean.temPermissaoRELATORIO_HISTORICO_ARQUIVO_TEXTO or
+				segurancaMenuBean.temPermissaoRELATORIO_OCORRENCIA_RECEBIMENTO_DAM_PAGO}" >
+					<p:menuitem value="#{msgs.label_emitir_arquivos_recebidos}" action="arquivosRecebidosReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ARQUIVOS_RECEBIDOS}" />
+					<p:menuitem value="#{msgs.label_emitir_arquivos_alterados}" action="ocorrenciaArquivoMovimentoBancoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_OCORRENCIA_ARQUIVO_MOVIMENTO_BANCO}" />
+					<p:menuitem value="#{msgs.label_emitir_historico_arquivo_texto}" action="historicoArquivoTextoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_HISTORICO_ARQUIVO_TEXTO}" />
+					<p:menuitem value="#{msgs.label_ocorrencias_acoes_arquivos}" action="ocorrenciaRecebimentoDAMPagoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_OCORRENCIA_RECEBIMENTO_DAM_PAGO}" />
+				</p:submenu>
+				<p:submenu label="#{msgs.label_campos_arquivos}" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_RECEBIMENTO_CAMPO_ARQUIVO or
+				segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_EXTRATO_CONTA_CAMPO_ARQUIVO or segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_SIAFI_CAMPO_ARQUIVO or 
+				segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_SIMPLES_NACIONAL_CAMPO_ARQUIVO}" >
+					<p:menuitem value="#{msgs.label_codigo_barras}" action="origemRecebimentoCampoArquivoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_RECEBIMENTO_CAMPO_ARQUIVO}" />
+					<p:menuitem value="#{msgs.label_extrato_conta_corrente}" action="origemExtratoContaCampoArquivoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_EXTRATO_CONTA_CAMPO_ARQUIVO}" />
+					<p:menuitem value="#{msgs.label_siafi}" action="origemSIAFICampoArquivoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_SIAFI_CAMPO_ARQUIVO}" />
+					<p:menuitem value="#{msgs.label_simples_nacional}" action="origemSimplesNacionalCampoArquivoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_ORIGEM_SIMPLES_NACIONAL_CAMPO_ARQUIVO}" />						
+				</p:submenu>
+				<p:submenu label="#{msgs.label_orgao_arrecadador}" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_CUSTO_SERVICO_BANCARIO or
+				segurancaMenuBean.temPermissaoRELATORIO_EFETIVO_ARRECADADO or segurancaMenuBean.temPermissaoRELATORIO_EFETIVO_REPASSADO}" >
+					<p:menuitem value="#{msgs.label_emitir_custo_servico_bancario}" action="custoServicoBancarioReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_CUSTO_SERVICO_BANCARIO}" />
+					<p:menuitem value="#{msgs.label_emitir_efetivo_arrecadado}" action="efetivoArrecadadoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_EFETIVO_ARRECADADO}" />
+					<p:menuitem value="#{msgs.label_emitir_efetivo_repassado}" action="efetivoRepassadoReport" ajax="false" rendered="#{segurancaMenuBean.temPermissaoRELATORIO_EFETIVO_REPASSADO}" />						
+				</p:submenu>
+			</p:submenu>
+			<p:submenu label="Debito Automatico [UC020072]" rendered="#{segurancaMenuBean.temPermissaoCADASTRO_BASICO}" >
+				<p:menuitem value="#{msgs.label_montar_arquivo_movimento}" action="#{montarArquivoDeMovimentoBean.getDefaultPageRule}" ajax="false"/>
+				<p:menuitem value="#{msgs.label_remontar_enviar_arquivo_movimento}" action="#{remontarEnviarArquivoDeMovimentoBean.getDefaultPageRule}" ajax="false"/>
+				<p:menuitem value="#{msgs.label_autorizar_registro_movimento}" action="#{autorizarRegistroMovimentoPCRBancoBean.getDefaultPageRule}" ajax="false"/>
+			</p:submenu>
+		</p:menubar>
+	</h:form>
+	
+</ui:composition>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_monitorarRemessaRetorno}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{monitorarRemessaRetornoEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_monitorarRemessaRetorno}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<p:poll interval="900" listener="#{monitorarRemessaRetornoSearchBean.verificarStatusMonitoramento}" update=":globalMessages" />
+				
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+				
+					<h:outputLabel value="#{msgs.campo_dataInicial}: " for="filtroDataInicio"/>
+					<p:calendar id="filtroDataInicio" value="#{monitorarRemessaRetornoSearchBean.filter.dataInicio}" showButtonPanel="true" pattern="dd/MM/yyyy" 
+						label="#{msgs.campo_dataInicial}" size="11"/>
+					<p:message for="filtroDataInicio" />
+					
+					<h:outputLabel value="#{msgs.campo_dataFinal}: " for="filtroDataFinal"/>
+					<p:calendar id="filtroDataFinal" value="#{monitorarRemessaRetornoSearchBean.filter.dataFim}" showButtonPanel="true" pattern="dd/MM/yyyy" 
+						label="#{msgs.campo_dataFinal}" size="11"/>
+					<p:message for="filtroDataFinal" />
+				
+					<h:outputLabel value="#{msgs.campo_orgaoArrecadador}: " for="filtroOrgaoArrecadador" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroOrgaoArrecadador" value="#{monitorarRemessaRetornoSearchBean.filter.orgaoArrecadador}" label="#{msgs.campo_orgaoArrecadador}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{orgaoArrecadadorSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu> 
+					</h:panelGroup>
+					<p:message for="filtroOrgaoArrecadador"/>
+					
+					<h:outputLabel value="#{msgs.campo_tipoMovimento}: " for="campoTipoMovimento" />
+					<h:panelGroup>
+						<p:selectOneMenu id="campoTipoMovimento" converter="enumConverter" value="#{monitorarRemessaRetornoSearchBean.filter.tipoEnvioEnum}" 
+						label="#{msgs.campo_tipoMovimento}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{monitorarRemessaRetornoSearchBean.listaTipoEnvio}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu> 
+					</h:panelGroup>
+					<p:message for="campoTipoMovimento"/>
+					
+					<h:outputLabel value="#{msgs.campo_status}: " for="campoStatus" />
+					<h:panelGroup>
+						<p:selectManyCheckbox id="campoStatus" value="#{monitorarRemessaRetornoSearchBean.colecaoStatus}" converter="statusARTRConverter" >
+							<f:selectItems value="#{statusARTRSearchBean.listItens}" var="item" itemValue="#{item}" itemLabel="#{item.descricao}" />
+						</p:selectManyCheckbox>
+					</h:panelGroup>
+					<p:message for="campoStatus" />
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{monitorarRemessaRetornoSearchBean.findByFilterAction}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{monitorarRemessaRetornoSearchBean.procurou}"
+					value="#{monitorarRemessaRetornoSearchBean.dataModel}" rows="#{monitorarRemessaRetornoSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false">
+	
+					<f:facet name="header">
+						<h:outputText value="#{monitorarRemessaRetornoSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+										
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_mascara}" />
+						</f:facet>
+						<h:outputText value="#{item.nome}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_nsa}" />
+						</f:facet>
+						<h:outputText value="#{item.numeroSequencial}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_orgaoArrecadador}" />
+						</f:facet>
+						<h:outputText value="#{item.orgaoArrecadador.descricao}" />
+					</p:column>
+	
+					<p:column styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_status}" />
+						</f:facet>
+						<h:outputText value="#{item.statusARTR.descricao}" />
+						<p:commandButton disabled="#{!monitorarRemessaRetornoEditBean.isBotaoReenviarHabilitado()}" 
+							ajax="true" 
+							label="#{msgs.action_reenviar}"
+							title="#{msgs.action_reenviar}"
+							value="#{msgs.action_reenviar}" 
+							action="#{monitorarRemessaRetornoEditBean.reenviarArquivo}"
+							update="listaResultado, :globalMessages, :globalMessagesPopup">							
+						</p:commandButton>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_dataRecepcao}" />
+						</f:facet>
+						<h:outputText value="#{item.dataRecepcao}" >
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_tempoGasto}" />
+						</f:facet>
+						<h:outputText value="#{monitorarRemessaRetornoSearchBean.tempoGasto}" styleClass="alignRight" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_QL}" title="#{msgs.label_quantidadeLinhas}" />
+						</f:facet>
+						<h:outputText value="#{item.quantidadeRegistros}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_QCE}" title="#{msgs.label_quantidadeCamposErro}" />
+						</f:facet>
+						<h:outputText value="#{monitorarRemessaRetornoSearchBean.qce}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_QOI}" title="#{msgs.label_quantidadeOcorrenciasInformativas}" />
+						</f:facet>
+						<h:outputText value="#{monitorarRemessaRetornoSearchBean.qoi}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_QOS}" title="#{msgs.label_quantidadeOcorrenciasSuspensivas}" />
+						</f:facet>
+						<h:outputText value="#{monitorarRemessaRetornoSearchBean.qos}" />
+					</p:column>
+					
+					
+					<!-- TODO melhorar a forma de fazer este comparativo  -->
+					<p:column>
+						<p:commandButton action="#{monitorarRemessaRetornoEditBean.getPageEdit}"
+							disabled="#{monitorarRemessaRetornoSearchBean.qos == 0}" 
+							actionListener="#{monitorarRemessaRetornoEditBean.startEditAction}"
+							ajax="false" 
+							icon="ui-icon-wrench"	
+							label="#{msgs.action_tratar_ocorrencias}"
+							title="#{msgs.action_tratar_ocorrencias}" />
+							
+						<p:commandButton disabled="#{!monitorarRemessaRetornoSearchBean.isArquivoComOcorrencia(item)}"
+							ajax="true" 
+							icon="ui-icon-alert"	
+							label="#{msgs.action_mostrar_ocorrencias_arquivo}"
+							title="#{msgs.action_mostrar_ocorrencias_arquivo}"
+							oncomplete="dlgRejeitados.show();"
+							update=":formRejeitados">
+							<f:setPropertyActionListener target="#{monitorarRemessaRetornoSearchBean.arquivoRejeitadoSelecionado}" value="#{item}" />
+						</p:commandButton>
+						
+						<p:commandButton disabled="#{!monitorarRemessaRetornoSearchBean.isArquivoDesprezavel(item)}" 
+							oncomplete="confirmation.show()" 
+							ajax="true"
+							immediate="true" 
+							label="#{msgs.action_desprezar}"
+							title="#{msgs.action_desprezar}"
+							icon="ui-icon-trash">
+							<f:setPropertyActionListener target="#{monitorarRemessaRetornoEditBean.arquivoParaDesprezar}" value="#{item}" /> 
+						</p:commandButton>
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_desprezar} #{msgs.campo_arquivo}?" 
+					header="#{msgs.action_desprezar} #{msgs.campo_arquivo}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{monitorarRemessaRetornoSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{monitorarRemessaRetornoEditBean.desprezarArquivo}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+	
+				</p:confirmDialog>
+				
+			</h:form>
+			
+			<p:dialog id="dialogRejeitados" header="#{msgs.label_ocorrencias} #{msgs.label_de} #{msgs.campo_arquivo}" widgetVar="dlgRejeitados" 
+				resizable="false" modal="true" draggable="false">
+				<h:form id="formRejeitados">
+					
+					<p:dataTable id="listaResultadoOcorrencias" var="item"	value="#{monitorarRemessaRetornoSearchBean.ocorrenciasArquivo}" 
+						rows="10" paginator="true" emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_arquivo}" />
+							</f:facet>
+							<h:outputText value="#{item.arquivo.codigo}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_ocorrenciaArrecadacao}"  />
+							</f:facet>
+							<h:outputText value="#{item.ocorrenciaFaseArrecadacao.ocorrenciaArrecadacao.descricao}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_faseArrecadacao}" />
+							</f:facet>
+							<h:outputText value="#{item.ocorrenciaFaseArrecadacao.faseArrecadacao.descricao}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_acaoOcorrencia}" />
+							</f:facet>
+							<h:outputText value="#{item.acaoOcorrencia.descricao}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_status_ocorrencia}" />
+							</f:facet>
+							<h:outputText value="#{item.statusOcorrenciaEnum.descricao}" />
+						</p:column>
+					
+					</p:dataTable>
+				
+				</h:form>
+			</p:dialog>
+
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

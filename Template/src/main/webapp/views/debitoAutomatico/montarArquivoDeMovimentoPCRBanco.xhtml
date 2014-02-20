@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition	
+	 xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_montar_arquivo_movimento}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define  name="content" >
+	
+		<f:event type="preRenderView" listener="#{montarArquivoDeMovimentoBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.label_montar_arquivo_movimento}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_Parametros_Pesquisa}" >
+			<h:messages />
+			<h:form id="formConsulta">
+			
+				<h:panelGrid columns="2" rendered="true" styleClass="formFields">
+					<h:outputLabel value="#{msgs.campo_compensacaoBancaria}: " for="compensacaoList"/>
+				    <p:selectManyMenu converter="CompensacaoBancariaConverter" required="true" id="listaCompensacoes" style="width:auto;max-height:80px"  value="#{montarArquivoDeMovimentoBean.compensacoesBancariasSelecionadas}" >
+				    	 <f:selectItems value="#{montarArquivoDeMovimentoBean.compensacoesBancarias}" itemLabel="#{cp.id} - #{cp.nomeBanco}" var="cp" />  
+				    </p:selectManyMenu>
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+					<p:toolbarGroup align="left">						
+						<p:commandButton 
+							id="botaoGerarArquivo"
+							process="listaCompensacoes @this"
+							update="registrosDataTablePanelGroup" 
+							value="#{msgs.action_gerar_arquivo}"
+							label="#{msgs.action_gerar_arquivo}"
+							title="#{msgs.action_gerar_arquivo}"
+							action="#{montarArquivoDeMovimentoBean.gerarArquivo}"/>
+					</p:toolbarGroup>
+				</p:toolbar>
+				
+				<h:panelGroup id="registrosDataTablePanelGroup" >
+					<h:panelGroup rendered="#{not empty montarArquivoDeMovimentoBean.registrosRemessaDTO}">
+					<!-- Tabela de registros Pendentes -->
+					<p:dataTable id="registrosNaoAutorizadosDataTable" var="item" rendered="#{montarArquivoDeMovimentoBean.possuiRegistrosNaoAutorizados}"
+						value="#{montarArquivoDeMovimentoBean.registrosRemessaDTO}" emptyMessage="#{msgs.consulta_vazia}"  >
+			
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_registros_pendentes_encontrados}" />
+						</f:facet>
+						<p:column style="width:45% !important;">
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_banco}" />
+							</f:facet>
+							<h:outputText  value="#{item.campoBanco}" />
+						</p:column>
+			
+						<p:column style="width:25% !important;">
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_registros_pendentes_autorizacao}" />
+							</f:facet>
+							<h:outputText  value="#{item.totalNaoAutorizado}" />
+						</p:column>
+						
+						<p:column style="width:30% !important;">
+							<f:facet name="header">
+								<h:outputText value="#{msgs.label_acoes}" />
+							</f:facet>
+							
+							<p:commandButton 
+								rendered="#{item.possuiRegistrosNaoAutorizados}" 
+								action="#{montarArquivoDeMovimentoBean.autorizarRegistro}"
+								value="#{msgs.label_autorizar}"
+								label="#{msgs.label_autorizar}"
+								title="#{msgs.label_autorizar}">
+								<f:setPropertyActionListener target="#{montarArquivoDeMovimentoBean.registroSelecionado}" value="#{item}"/>
+							</p:commandButton>
+							
+							<p:commandButton  
+								action="#{montarArquivoDeMovimentoBean.gerarArquivoPeloRegistroSelecionado}"
+								process="@this"
+								oncomplete="confirmation.show()"
+								value="#{msgs.label_gerar_arquivo}"
+								label="#{msgs.label_gerar_arquivo}"
+								title="#{msgs.label_gerar_arquivo}">
+								<f:setPropertyActionListener target="#{montarArquivoDeMovimentoBean.registroSelecionado}" value="#{item}"/>
+							</p:commandButton>
+								
+						</p:column>
+							
+					</p:dataTable>
+					
+					<p:toolbar style="margin-top:5px;" rendered="#{montarArquivoDeMovimentoBean.possuiRegistrosNaoAutorizados}">
+						<p:toolbarGroup align="left">						
+							<p:commandButton 
+								ajax="false" 
+								value="#{msgs.action_gerar_todos}"
+								label="#{msgs.action_gerar_todos}"
+								title="#{msgs.action_gerar_todos}"
+								action="#{montarArquivoDeMovimentoBean.gerarTodosArquivos}"/>
+						</p:toolbarGroup>
+					</p:toolbar>
+					
+					<!-- Tabela de Registros Processados -->
+					
+					<p:dataTable id="registrosProcessadosDataTable" var="item" rendered="#{not montarArquivoDeMovimentoBean.possuiRegistrosNaoAutorizados}"
+						value="#{montarArquivoDeMovimentoBean.registrosRemessaDTO}" emptyMessage="#{msgs.consulta_vazia}"  >
+			
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_arquivo_gerado_sucesso}" />
+						</f:facet>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_banco}" />
+							</f:facet>
+							<h:outputText value="#{item.campoBanco}" />
+						</p:column>
+			
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.label_total_registros}" />
+							</f:facet>
+							<h:outputText value="#{item.totalRegistrosProcessados}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.label_debito}" />
+							</f:facet>
+							<h:outputText value="#{item.quantidadeRegistroDebitoContaProcessados}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.label_ocorrencia_cadastro}" />
+							</f:facet>
+							<h:outputText value="#{item.quantidadeRegistroOcorrenciaCadastroDebitoAutomaticoProcessados}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.label_alteracao_exlcusao}" />
+							</f:facet>
+							<h:outputText value="#{item.quantidadeRegistroRemessaAlteracaoClienteProcessados}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.label_confirmacao_processamento}" />
+							</f:facet>
+							<h:outputText value="#{item.quantidadeRegistroConfirmacaoProcessamentoArquivoRemessaProcessados}" />
+						</p:column>
+							
+					</p:dataTable>
+					</h:panelGroup>
+				 </h:panelGroup>
+			</h:form>
+		</p:panel>
+		<br/> 	
+	</ui:define>
+</ui:composition>

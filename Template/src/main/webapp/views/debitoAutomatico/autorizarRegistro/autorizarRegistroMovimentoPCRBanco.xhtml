@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_autorizar_registro_movimento}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{autorizarRegistroMovimentoPCRBancoBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui 	[CR118609]:-corner-all">
+			<h:outputText value="#{msgs.label_autorizar_registro_movimento}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_Parametros_Pesquisa}" >
+
+			<h:form id="formConsulta">
+			 
+				<h:panelGrid columns="2" rendered="true" styleClass="formFields">
+					
+					<h:outputLabel value="#{msgs.campo_compensacaoBancaria} (*): " for="listaCompensacoes"/>
+			        <p:selectManyMenu converter="CompensacaoBancariaConverter" id="listaCompensacoes" style="width:auto;max-height:80px" value="#{autorizarRegistroMovimentoPCRBancoBean.compensacoesBancariasSelecionadas}" >
+				    	 <f:selectItems value="#{autorizarRegistroMovimentoPCRBancoBean.compensacoesBancarias}" itemLabel="#{cp.id} - #{cp.nomeBanco}" var="cp" itemValue="#{cp}"/>  
+				    </p:selectManyMenu>
+				    
+				    <h:outputLabel value="#{msgs.campo_compensacaoBancaria}: " for="listaRegistros"/>
+				    <p:selectManyMenu  id="listaRegistros" style="width:auto;max-height:80px"  value="#{autorizarRegistroMovimentoPCRBancoBean.tipoRegistrosSelecionados}" >
+				    	 <f:selectItems value="#{autorizarRegistroMovimentoPCRBancoBean.tipoRegistros}" itemLabel="#{cp.descricao}" var="cp"  itemValue="#{cp}" />  
+				    </p:selectManyMenu>
+			       
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">						
+							<p:commandButton 
+							id="botaoPesquisarArquivo"
+							process="listaCompensacoes @this" 
+							update="registrosDataTablePanelGroup"
+							value="#{msgs.action_pesquisar}"
+							label="#{msgs.action_pesquisar}"
+							title="#{msgs.action_pesquisar}"
+							action="#{autorizarRegistroMovimentoPCRBancoBean.pesquisar}"/>
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<h:panelGroup id="registrosDataTablePanelGroup">
+					<ui:repeat id="acordionRepeat" var="dto" value="#{autorizarRegistroMovimentoPCRBancoBean.autorizarRegistrosModel}" >
+						<p:accordionPanel id="acordion" >
+							  <p:tab id="tabs" title="#{dto.compensacaoBancaria.nomeBanco}"  >  
+								    <p:dataTable id="tableDebito" var="rd"  value="#{dto.registrosEModel}" selection="#{dto.registrosESelecionados}" 
+							        			 emptyMessage="#{msgs.consulta_vazia}">  
+										<f:facet name="header" >  
+									         Débito
+									    </f:facet>  
+									    
+									    <p:column id="checkBox" selectionMode="multiple" style="width:2%" />
+									    
+								        <p:column id="identificadorEpresa" headerText="Identificação do Cliente" style="text-align: left">  
+								            #{rd.identificadorClienteEmpresa}  
+								        </p:column>  
+								        <p:column headerText="Agência" style="text-align: left">  
+								            #{rd.numeroAgencia}  
+								        </p:column> 
+								        <p:column id="id" headerText="Conta" style="text-align: left">  
+								            #{rd.id}  
+								        </p:column> 
+								        <p:column headerText="Data Venc." style="text-align: left">  
+								            #{rd.dataVencimento}  
+								        </p:column> 
+								        <p:column headerText="Valor Debito" style="text-align: left">  
+								            #{rd.valorDebito}  
+								        </p:column> 
+								        <p:column headerText="Código de Movimento" style="text-align: left">
+								            #{rd.codigoMovimento}  
+								        </p:column>
+								    </p:dataTable>  
+						    </p:tab>  
+						</p:accordionPanel>
+				</ui:repeat>
+				<p:commandButton id="autorizarBotao" process="registrosDataTablePanelGroup" update="registrosDataTablePanelGroup" value="autorizar" action="#{autorizarRegistroMovimentoPCRBancoBean.autorizarRegistro}" />
+				</h:panelGroup>
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

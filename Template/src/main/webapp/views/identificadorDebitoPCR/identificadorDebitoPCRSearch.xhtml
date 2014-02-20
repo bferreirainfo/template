@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_identificadorDebitoPCR}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{identificadorDebitoPCREditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_identificadorDebitoPCR}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel  value="#{msgs.campo_id}: " for="filtroId"/>
+					<p:inputMask mask="?99999" id="filtroId" value="#{identificadorDebitoPCRSearchBean.filter.id}" label="#{msgs.campo_id}" size="5" maxlength="10" />
+					<p:message for="filtroId" />
+					
+					<h:outputLabel value="#{msgs.campo_descricao}: " for="filtroDescricao" />
+					<p:inputText id="filtroDescricao" value="#{identificadorDebitoPCRSearchBean.filter.descricaoLike}" label="#{msgs.campo_descricao}" size="50" maxlength="100" />
+					<p:message for="filtroDescricao" />
+					
+					<h:outputLabel value="#{msgs.campo_indicador}: " for="filtroIndicador" />
+					<h:selectOneRadio id="filtroIndicador" label="#{msgs.campo_indicador}" value="#{identificadorDebitoPCRSearchBean.filter.indicador}" layout="lineDirection" converter="enumConverter" >
+                        <f:selectItems value="#{modeloDAMSearchBean.listaIndicadorMarcacao}" var="item" itemValue="#{item}" itemLabel="#{item.descricao}"/>
+                    </h:selectOneRadio>
+					<p:message for="filtroIndicador" />
+					
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{identificadorDebitoPCRSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{identificadorDebitoPCREditBean.getPageEdit}"
+							actionListener="#{identificadorDebitoPCREditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{identificadorDebitoPCRSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{identificadorDebitoPCRReportBean.preparaConsultaRelatorio}"
+							rendered="#{identificadorDebitoPCRSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{identificadorDebitoPCRSearchBean.procurou}"
+					value="#{identificadorDebitoPCRSearchBean.dataModel}" rows="#{identificadorDebitoPCRSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false">
+	
+					<f:facet name="header">
+						<h:outputText value="#{identificadorDebitoPCRSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_id}" />
+						</f:facet>
+						<h:outputText value="#{item.id}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_descricao}" />
+						</f:facet>
+						<h:outputText value="#{item.descricao}" />
+					</p:column>
+					
+					<p:column styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_indicador}" />
+						</f:facet>
+						<h:outputText value="#{item.indicador.descricao}" />
+					</p:column>
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{identificadorDebitoPCREditBean.getPageEdit}"
+							actionListener="#{identificadorDebitoPCREditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{identificadorDebitoPCREditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.campo_identificadorDebitoPCR}?" 
+					header="#{msgs.action_remover} #{msgs.campo_identificadorDebitoPCR}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{identificadorDebitoPCRSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{identificadorDebitoPCREditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+												
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

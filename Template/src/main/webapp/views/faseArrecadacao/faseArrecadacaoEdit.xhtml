@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{!faseArrecadacaoEditBean.editMode ? msgs.label_inclusao : msgs.label_edicao} #{msgs.label_de} #{msgs.campo_faseArrecadacao}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{faseArrecadacaoEditBean.checkPermission}" />
+	
+		<h:form id="formEdicao" prependId="false">
+			
+		<h1 class="title ui-widget-header ui-corner-all"><h:outputText value="#{msgs.campo_faseArrecadacao}" /></h1>
+		
+		<p:panel id="fieldEdicao" header="#{!faseArrecadacaoEditBean.editMode ? msgs.label_inclusao: msgs.label_edicao}" footer="#{msgs.label_mensagem_obrigatorios}">
+		
+			<h:panelGrid columns="3" style="font-size: 12px; font-weight: bold;" styleClass="ui-widget">
+			
+				<h:outputLabel value="#{msgs.campo_codigo} (*):" for="codigoBanco" rendered="#{!faseArrecadacaoEditBean.editMode}"/>
+				<h:panelGroup rendered="#{!faseArrecadacaoEditBean.editMode}">
+					<p:inputText id="codigoBanco" value="#{faseArrecadacaoEditBean.entity.id}" size="5" maxlength="10" /> 
+				</h:panelGroup>
+				<p:message for="codigoBanco" showSummary="true" showDetail="false" rendered="#{!faseArrecadacaoEditBean.editMode}"/>
+
+				<h:outputLabel value="#{msgs.campo_descricao} (*): " for="descricao"/>
+				<h:panelGroup>
+					<p:inputText id="descricao" value="#{faseArrecadacaoEditBean.entity.descricao}" size="35" maxlength="45" />
+				</h:panelGroup>
+				<p:message for="descricao" showSummary="true" showDetail="false"/>
+				
+			</h:panelGrid>
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+
+					<p:commandButton ajax="false" id="save" icon="ui-icon-disk"
+						value="#{!faseArrecadacaoEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						action="#{faseArrecadacaoEditBean.save}"
+						label="#{!faseArrecadacaoEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						title="#{!faseArrecadacaoEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						styleClass="salvar" />
+
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton ajax="false" id="cancelar" icon="ui-icon-cancel"
+						value="#{msgs.action_voltar}" title="#{msgs.action_voltar}"
+						label="#{msgs.action_voltar}" action="#{faseArrecadacaoEditBean.cancel}"
+						immediate="true" styleClass="sair" />
+				</p:toolbarGroup>
+			</p:toolbar>
+			
+		</p:panel>
+		
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

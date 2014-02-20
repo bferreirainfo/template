@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_compensacaoBancaria}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{compensacaoBancariaEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_compensacaoBancaria}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel  value="#{msgs.campo_codigo}: " for="filtroId"/>
+					<p:inputMask mask="?99999" id="filtroId" value="#{compensacaoBancariaSearchBean.filter.id}" label="#{msgs.campo_codigo}" size="5" maxlength="10" />
+					<p:message for="filtroId" />
+					
+					<h:outputLabel value="#{msgs.campo_nome_banco}: " for="filtroNomeBanco" />
+					<p:inputText id="filtroNomeBanco" value="#{compensacaoBancariaSearchBean.filter.nomeBancoLike}" label="#{msgs.campo_nome_banco}" size="50" maxlength="150" />
+					<p:message for="filtroNomeBanco" />
+					
+					<h:outputLabel value="#{msgs.campo_debito_automatico}: " for="filtroDebitoAutomatico" />
+					<p:selectOneMenu id="filtroDebitoAutomatico" value="#{compensacaoBancariaSearchBean.filter.debitoAutomatico}" label="#{msgs.campo_debito_automatico}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+					</p:selectOneMenu>
+					<p:message for="filtroDebitoAutomatico" />
+					
+					<h:outputLabel value="#{msgs.campo_possui_codigo_febraban}: " for="filtroCodigoFebraban" />
+					<p:selectOneMenu id="filtroCodigoFebraban" value="#{compensacaoBancariaSearchBean.filter.codigoFebraban}" label="#{msgs.campo_possui_codigo_febraban}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+					</p:selectOneMenu>
+					<p:message for="filtroCodigoFebraban" />
+					
+					<h:outputLabel value="#{msgs.campo_pertencePCR}: " for="filtroPertencePCR" />
+					<p:selectOneMenu id="filtroPertencePCR" value="#{compensacaoBancariaSearchBean.filter.pertencePCR}" label="#{msgs.campo_pertencePCR}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+					</p:selectOneMenu>
+					<p:message for="filtroPertencePCR" />
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{compensacaoBancariaSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{compensacaoBancariaEditBean.getPageEdit}"
+							actionListener="#{compensacaoBancariaEditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{compensacaoBancariaSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							immediate="true"
+							action="#{compensacaoBancariaReportBean.preparaConsultaRelatorio}"
+							rendered="#{compensacaoBancariaSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{compensacaoBancariaSearchBean.procurou}"
+					value="#{compensacaoBancariaSearchBean.dataModel}" rows="#{compensacaoBancariaSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false">
+	
+					<f:facet name="header">
+						<h:outputText value="#{compensacaoBancariaSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_id}" />
+						</f:facet>
+						<h:outputText value="#{item.id}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_nome_banco}" />
+						</f:facet>
+						<h:outputText value="#{item.nomeBanco}" />
+					</p:column>
+					
+					<p:column styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_debito_automatico}" />
+						</f:facet>
+						<h:outputText value="#{item.debitoAutomatico ? msgs.action_sim : msgs.action_nao}" />
+					</p:column>
+					
+					<p:column styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_possui_codigo_febraban}" />
+						</f:facet>
+						<h:outputText value="#{item.codigoFebraban ? msgs.action_sim : msgs.action_nao}" />
+					</p:column>
+					
+					<p:column styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_pertencePCR}" />
+						</f:facet>
+						<h:outputText value="#{item.pertencePCR ? msgs.action_sim : msgs.action_nao}" />
+					</p:column>
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{compensacaoBancariaEditBean.getPageEdit}"
+							actionListener="#{compensacaoBancariaEditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{compensacaoBancariaEditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.campo_compensacaoBancaria}?" 
+					header="#{msgs.action_remover} #{msgs.campo_compensacaoBancaria}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{compensacaoBancariaSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{compensacaoBancariaEditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

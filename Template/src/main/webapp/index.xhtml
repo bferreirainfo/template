@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html
+	xmlns:html="http://www.w3.org/1999/xhtml"
+ 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<f:view contentType="text/html" locale="pt_BR">	
+		<h:body>
+			<h:form>
+				<p:commandButton value="salvar" action="#{usuarioBean.salvar}" />
+				<br/>
+				usuarioBean: #{usuarioBean.a}
+			</h:form>
+		</h:body>
+	</f:view>
+</html>

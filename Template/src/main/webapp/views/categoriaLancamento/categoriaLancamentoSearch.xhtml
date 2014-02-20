@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.label_categoria_lancamento}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{categoriaLancamentoEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.label_categoria_lancamento}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel  value="#{msgs.campo_codigo}: " for="filtroCodigo"/>
+					<p:inputMask mask="?99999" id="filtroCodigo" value="#{categoriaLancamentoSearchBean.filter.codigoEquals}" label="#{msgs.campo_codigo}" size="5" maxlength="10" />
+					<p:message for="filtroCodigo" />
+					
+					<h:outputLabel value="#{msgs.campo_descricao}: " for="filtroDescricao" />
+					<p:inputText id="filtroDescricao" value="#{categoriaLancamentoSearchBean.filter.descricaoLike}" label="#{msgs.campo_descricao}" size="50" maxlength="150" />
+					<p:message for="filtroDescricao" />
+					
+					<h:outputLabel  value="#{msgs.campo_codigo_numerico_lancamento}: " for="filtroCodigoNumerico"/>
+					<p:inputMask mask="?99999" id="filtroCodigoNumerico" value="#{categoriaLancamentoSearchBean.filter.codigoNumericoEquals}" label="#{msgs.campo_codigo_numerico_lancamento}" size="5" maxlength="10" />
+					<p:message for="filtroCodigoNumerico" />
+					
+					<h:outputLabel value="#{msgs.campo_tipo_credito}: " for="filtroTipoCredito" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroTipoCredito" converter="enumConverter" value="#{categoriaLancamentoSearchBean.filter.tipoCreditoEquals}" label="#{msgs.campo_tipo_credito}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{categoriaLancamentoSearchBean.listaTipoCredito}" var="item" 
+							itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="filtroTipoCredito"/>
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{categoriaLancamentoSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{categoriaLancamentoEditBean.getPageEdit}"
+							actionListener="#{categoriaLancamentoEditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{categoriaLancamentoSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{categoriaLancamentoReportBean.preparaConsultaRelatorio}"
+							rendered="#{categoriaLancamentoSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{categoriaLancamentoSearchBean.procurou}"
+					value="#{categoriaLancamentoSearchBean.dataModel}" rows="#{categoriaLancamentoSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false" >
+	
+					<f:facet name="header">
+						<h:outputText value="#{categoriaLancamentoSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_codigo}" />
+						</f:facet>
+						<h:outputText value="#{item.codigo}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_descricao}" />
+						</f:facet>
+						<h:outputText value="#{item.descricao}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_codigo_numerico_lancamento}" />
+						</f:facet>
+						<h:outputText value="#{item.codigoNumerico}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_tipo_credito}" />
+						</f:facet>
+						<h:outputText value="#{item.tipoCredito.descricao}" />
+					</p:column>
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{categoriaLancamentoEditBean.getPageEdit}"
+							actionListener="#{categoriaLancamentoEditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{categoriaLancamentoEditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.label_categoria_lancamento}?" 
+					header="#{msgs.action_remover} #{msgs.label_categoria_lancamento}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{categoriaLancamentoSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{categoriaLancamentoEditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

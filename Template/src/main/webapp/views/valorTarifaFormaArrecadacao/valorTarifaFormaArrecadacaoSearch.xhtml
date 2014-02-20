@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_valorTarifaFormaArrecadacao}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{valorTarifaFormaArrecadacaoEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_valorTarifaFormaArrecadacao}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel value="#{msgs.campo_formaArrecadacao}: " for="filtroFormaArrecadacao" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroFormaArrecadacao" value="#{valorTarifaFormaArrecadacaoSearchBean.filter.formaArrecadacao}" label="#{msgs.campo_formaArrecadacao}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{formaArrecadacaoSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="filtroFormaArrecadacao"/>
+					
+					<h:outputLabel value="#{msgs.campo_orgaoArrecadador}: " for="filtroOrgaoArrecadador" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroOrgaoArrecadador" value="#{valorTarifaFormaArrecadacaoSearchBean.filter.orgaoArrecadador}" label="#{msgs.campo_orgaoArrecadador}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{orgaoArrecadadorSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="filtroOrgaoArrecadador"/>	
+					
+					<h:outputLabel value="#{msgs.campo_dataInicioValidade}: " for="filtroDataInicioValidade"/>
+					<p:calendar id="filtroDataInicioValidade" value="#{valorTarifaFormaArrecadacaoSearchBean.filter.dataInicioValidade}" showButtonPanel="true" pattern="dd/MM/yyyy" label="#{msgs.campo_dataInicioValidade}" size="11"/>
+					<p:message for="filtroDataInicioValidade" />
+					
+					<h:outputLabel value="#{msgs.campo_dataFinalValidade}: " for="filtroDataFinalValidade"/>
+					<p:calendar id="filtroDataFinalValidade" value="#{valorTarifaFormaArrecadacaoSearchBean.filter.dataFinalValidade}" showButtonPanel="true" pattern="dd/MM/yyyy" label="#{msgs.campo_dataFinalValidade}" size="11"/>
+					<p:message for="filtroDataFinalValidade" />
+					
+					<h:outputLabel value="#{msgs.campo_indicadorIndiceValorTarifa}: " for="filtroIndicadorIndiceValorTarifa" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroIndicadorIndiceValorTarifa" converter="enumConverter" value="#{valorTarifaFormaArrecadacaoSearchBean.filter.indicadorIndice}" label="#{msgs.campo_indicadorIndiceValorTarifa}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{valorTarifaFormaArrecadacaoSearchBean.listaIndicadorIndiceValorTarifa}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="filtroIndicadorIndiceValorTarifa"/>
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{valorTarifaFormaArrecadacaoSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{valorTarifaFormaArrecadacaoEditBean.getPageEdit}"
+							actionListener="#{valorTarifaFormaArrecadacaoEditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{valorTarifaFormaArrecadacaoSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{valorTarifaFormaArrecadacaoReportBean.preparaConsultaRelatorio}"
+							rendered="#{valorTarifaFormaArrecadacaoSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{valorTarifaFormaArrecadacaoSearchBean.procurou}"
+					value="#{valorTarifaFormaArrecadacaoSearchBean.dataModel}" rows="#{valorTarifaFormaArrecadacaoSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false" >
+	
+					<f:facet name="header">
+						<h:outputText value="#{valorTarifaFormaArrecadacaoSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_formaArrecadacao}" />
+						</f:facet>
+						<h:outputText value="#{item.formaArrecadacao.descricao}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_orgaoArrecadador}" />
+						</f:facet>
+						<h:outputText value="#{item.orgaoArrecadador.descricao}">
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_dataInicioValidade}" />
+						</f:facet>
+						<h:outputText value="#{item.dataInicioValidade}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_dataFinalValidade}" />
+						</f:facet>
+						<h:outputText value="#{item.dataFinalValidade}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_indicadorIndiceValorTarifa}" />
+						</f:facet>
+						<h:outputText value="#{item.indicadorIndice.descricao}" />
+					</p:column>
+					
+					<p:column styleClass="alignRight">
+						<f:facet name="header" >
+							<h:outputText value="#{msgs.campo_valorTarifa}" />
+						</f:facet>
+						<h:outputText value="#{item.valorTarifa}" converter="RealConverter"/>
+					</p:column>
+					
+					
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{valorTarifaFormaArrecadacaoEditBean.getPageEdit}"
+							actionListener="#{valorTarifaFormaArrecadacaoEditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{valorTarifaFormaArrecadacaoEditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.campo_valorTarifaFormaArrecadacao}?" 
+					header="#{msgs.action_remover} #{msgs.campo_valorTarifaFormaArrecadacao}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{valorTarifaFormaArrecadacaoSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{valorTarifaFormaArrecadacaoEditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

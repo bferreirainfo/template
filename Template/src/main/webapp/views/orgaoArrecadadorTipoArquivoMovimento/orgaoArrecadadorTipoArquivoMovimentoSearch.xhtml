@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+	
+	<ui:define name="titulo">
+		<h:outputText value="#{msgs.label_cadastro} #{msgs.label_de} #{msgs.campo_orgaoArrecadadorTipoArquivoCompensacaoBancaria}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.checkPermission}" />
+		
+		<h1 class="title ui-widget-header ui-corner-all">
+			<h:outputText value="#{msgs.campo_orgaoArrecadadorTipoArquivoCompensacaoBancaria}" />
+		</h1>
+					
+		<p:panel header="#{msgs.label_consulta}" footer="#{msgs.label_mensagem_filtros}">
+
+			<h:form id="formConsulta" prependId="false">
+			
+				<h:panelGrid columns="3" rendered="true" styleClass="formFields">
+	
+					<h:outputLabel value="#{msgs.campo_orgaoArrecadador}: " for="filtroOrgaoArrecadador" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroOrgaoArrecadador" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.orgaoArrecadador}" 
+						label="#{msgs.campo_orgaoArrecadador}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{orgaoArrecadadorSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu> 
+					</h:panelGroup>
+					<p:message for="filtroOrgaoArrecadador"/>
+					
+					<h:outputLabel value="#{msgs.campo_tipoArquivoMovimento}: " for="filtroTipoArquivoMovimento" />
+					<h:panelGroup>
+						<p:selectOneMenu id="filtroTipoArquivoMovimento" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.tipoArquivoMovimento}" 
+						label="#{msgs.campo_tipoArquivoMovimento}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{tipoArquivoMovimentoSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu> 
+					</h:panelGroup>
+					<p:message for="filtroTipoArquivoMovimento"/>
+					
+					<h:outputLabel value="#{msgs.campo_compensacaoBancaria}: " for="campoCompensacaoBancaria" />
+					<h:panelGroup>
+						<p:selectOneMenu id="campoCompensacaoBancaria" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.compensacaoBancaria}" 
+						label="#{msgs.campo_compensacaoBancaria}:">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{compensacaoBancariaSearchBean.listItensValidos}" var="item" itemLabel="#{item.nomeBanco}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="campoCompensacaoBancaria"/>	
+					
+					<h:outputLabel value="#{msgs.campo_codigoConvenio}: " for="filtroCodigoConvenio" />
+					<p:inputText id="filtroCodigoConvenio" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.codigoConvenio}" 
+					label="#{msgs.campo_codigoConvenio}" 
+					size="20" maxlength="20" />
+					<p:message for="filtroCodigoConvenio" />
+					
+					<h:outputLabel value="#{msgs.campo_verificadorArrecadacao}: " for="filtroVerificadorArrecadacao" />
+					<p:inputText id="filtroVerificadorArrecadacao" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.verificadorArrecadacao}" 
+					label="#{msgs.campo_verificadorArrecadacao}" 
+					size="5" maxlength="5" />
+					<p:message for="filtroVerificadorArrecadacao" />					
+					
+					<h:outputLabel value="#{msgs.campo_verificadorRepasse}: " for="filtroVerificadorRepasse" />
+					<p:inputText id="filtroVerificadorRepasse" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.verificadorRepasse}" 
+					label="#{msgs.campo_verificadorRepasse}" 
+					size="5" maxlength="5" />
+					<p:message for="filtroVerificadorRepasse" />
+					
+					<h:outputLabel value="#{msgs.campo_intervaloEnvioRajada} (#{msgs.campo_emMinutos}): " for="filtroIntervaloEnvioRajada" />
+					<p:inputText id="filtroIntervaloEnvioRajada" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.intervaloEnvioRajada}" 
+					label="#{msgs.campo_intervaloEnvioRajada}" 
+					size="3" maxlength="3" />
+					<p:message for="filtroIntervaloEnvioRajada" />
+					
+					<h:outputLabel value="#{msgs.campo_indicadorRecepcaoRajada}: " for="filtroIndicadorRecepcaoRajada" />
+					<p:selectOneMenu id="filtroIndicadorRecepcaoRajada" value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.filter.indicadorRecepcaoRajada}" 
+					label="#{msgs.campo_indicadorRecepcaoRajada}">
+						<f:selectItem itemLabel="#{msgs.label_selecione}" itemValue="" />
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+					</p:selectOneMenu>
+					<p:message for="filtroIndicadorRecepcaoRajada" />
+				
+				</h:panelGrid>
+				
+				<p:toolbar style="margin-top:5px;">
+	
+					<p:toolbarGroup align="left">
+						<p:commandButton ajax="false" icon="ui-icon-search"
+							value="#{msgs.action_consultar}"
+							label="#{msgs.action_consultar}"
+							title="#{msgs.action_consultar}"
+							actionListener="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.findByFilterAction}" />
+	
+						<p:separator />
+	
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_novo}"
+							label="#{msgs.action_novo}"
+							title="#{msgs.action_novo}"
+							icon="ui-icon-newwin"
+							immediate="true"
+							action="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.getPageEdit}"
+							actionListener="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.startInsertAction}" />
+							
+						<p:separator rendered="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.dataModel.rowCount > 0}" />
+						
+						<p:commandButton ajax="false" 
+							value="#{msgs.action_gerar_relatorio}"
+							label="#{msgs.action_gerar_relatorio}"
+							title="#{msgs.action_gerar_relatorio}"
+							icon="ui-icon-print"
+							immediate="true"
+							action="#{orgaoArrecadadorTipoArquivoMovimentoReportBean.preparaConsultaRelatorio}"
+							rendered="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.dataModel.rowCount > 0}" />
+							
+					</p:toolbarGroup>
+	
+				</p:toolbar>
+				
+				<p:dataTable id="listaResultado" var="item" rendered="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.procurou}"
+					value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.dataModel}" rows="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.pageSize}" paginator="true" 
+					emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false" >
+	
+					<f:facet name="header">
+						<h:outputText value="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.dataModel.rowCount} #{msgs.label_registros_encontrados}" />
+					</f:facet>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_orgaoArrecadador}" />
+						</f:facet>
+						<h:outputText value="#{item.orgaoArrecadador.descricao}" />
+					</p:column>
+	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_tipoArquivoMovimento}" />
+						</f:facet>
+						<h:outputText value="#{item.tipoArquivoMovimento.descricao}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_compensacaoBancaria}" />
+						</f:facet>
+						<h:outputText value="#{item.compensacaoBancaria.nomeBanco}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_codigoConvenio}" />
+						</f:facet>
+						<h:outputText value="#{item.codigoConvenio}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_verificadorArrecadacao}" />
+						</f:facet>
+						<h:outputText value="#{item.verificadorArrecadacao}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_verificadorRepasse}" />
+						</f:facet>
+						<h:outputText value="#{item.verificadorRepasse}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_intervaloEnvioRajada}" />
+						</f:facet>
+						<h:outputText value="#{item.intervaloEnvioRajada}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_indicadorRecepcaoRajada}" />
+						</f:facet>
+						<h:outputText value="#{item.indicadorRecepcaoRajada}" />
+					</p:column>
+					
+					<p:column style="width: 50px;" styleClass="alignCenter">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.campo_excluido}" />
+						</f:facet>
+						<h:outputText value="#{item.dataDesativacao != null ? msgs.action_sim:''}" />
+					</p:column>
+					
+					<p:column style="width: 75px">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.label_acoes}" />
+						</f:facet>
+						
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							action="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.getPageEdit}"
+							actionListener="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.startEditAction}"
+							ajax="false" icon="ui-icon-pencil"	
+							label="#{msgs.action_editar}"
+							title="#{msgs.action_editar}"
+							 />
+										
+						<p:commandButton disabled="#{item.dataDesativacao != null}" 
+							actionListener="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.startEditAction}" 
+							oncomplete="confirmation.show()" 
+							ajax="true" immediate="true" 
+							label="#{msgs.action_excluir}"
+							title="#{msgs.action_excluir}"
+							icon="ui-icon-trash"/>
+							
+					</p:column>
+						
+				</p:dataTable>
+				
+				<p:confirmDialog message="#{msgs.action_pergunta_exclusao} #{msgs.campo_orgaoArrecadadorTipoArquivoCompensacaoBancaria}?" 
+					header="#{msgs.action_remover} #{msgs.campo_orgaoArrecadadorTipoArquivoCompensacaoBancaria}" severity="alert" widgetVar="confirmation">
+	
+					<p:commandButton value="#{msgs.action_sim}" oncomplete="confirmation.hide()"
+						action="#{orgaoArrecadadorTipoArquivoMovimentoSearchBean.atualizarLista}" immediate="true" ajax="false" 
+						actionListener="#{orgaoArrecadadorTipoArquivoMovimentoEditBean.removeAction}" />
+						
+					<p:commandButton value="#{msgs.action_nao}" onclick="confirmation.hide()" type="button" />
+
+				</p:confirmDialog>
+
+			</h:form>
+		
+		</p:panel>
+		
+		<br/> 	
+				
+	</ui:define>
+
+</ui:composition>

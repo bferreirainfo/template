@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<exceptions>
+	
+	<exception class="java.lang.Exception">
+		<handler context="jsf"  class="br.gov.emprel.ewf.exceptions.handler.web.jsf.exception.ExceptionHandlerJsf" />
+	</exception>
+
+</exceptions>

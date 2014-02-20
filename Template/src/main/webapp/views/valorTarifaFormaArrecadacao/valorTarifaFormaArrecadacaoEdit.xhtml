@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{!valorTarifaFormaArrecadacaoEditBean.editMode ? msgs.label_inclusao : msgs.label_edicao} #{msgs.label_de} #{msgs.campo_valorTarifaFormaArrecadacao}" />
+	</ui:define>
+	
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{valorTarifaFormaArrecadacaoEditBean.checkPermission}" />
+	
+		<h:form id="formEdicao" prependId="false">
+			
+		<h1 class="title ui-widget-header ui-corner-all"><h:outputText value="#{msgs.campo_valorTarifaFormaArrecadacao}" /></h1>
+		
+		<p:panel id="fieldEdicao" header="#{!valorTarifaFormaArrecadacaoEditBean.editMode ? msgs.label_inclusao: msgs.label_edicao}" footer="#{msgs.label_mensagem_obrigatorios}">
+		
+			<h:panelGrid columns="3" style="font-size: 12px; font-weight: bold;" styleClass="ui-widget">
+
+				<h:outputLabel value="#{msgs.campo_formaArrecadacao} (*): " for="campoFormaArrecadacao" />
+					<h:panelGroup>
+						<p:selectOneMenu id="campoFormaArrecadacao" value="#{valorTarifaFormaArrecadacaoEditBean.entity.formaArrecadacao}" label="#{msgs.campo_formaArrecadacao}" disabled="#{valorTarifaFormaArrecadacaoEditBean.editMode}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{formaArrecadacaoSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="campoFormaArrecadacao"/>
+					
+					<h:outputLabel value="#{msgs.campo_orgaoArrecadador} (*): " for="campoOrgaoArrecadador" />
+					<h:panelGroup>
+						<p:selectOneMenu id="campoOrgaoArrecadador" value="#{valorTarifaFormaArrecadacaoEditBean.entity.orgaoArrecadador}" label="#{msgs.campo_orgaoArrecadador}" disabled="#{valorTarifaFormaArrecadacaoEditBean.editMode}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{orgaoArrecadadorSearchBean.listItensValidos}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="campoOrgaoArrecadador"/>	
+					
+					<h:outputLabel value="#{msgs.campo_dataInicioValidade} (*): " for="campoDataInicioValidade"/>
+					<p:calendar id="campoDataInicioValidade" value="#{valorTarifaFormaArrecadacaoEditBean.entity.dataInicioValidade}" showButtonPanel="true" pattern="dd/MM/yyyy" label="#{msgs.campo_dataInicioValidade}" size="11" disabled="#{valorTarifaFormaArrecadacaoEditBean.editMode}"/>
+					<p:message for="campoDataInicioValidade" />
+					
+					<h:outputLabel value="#{msgs.campo_dataFinalValidade} (*): " for="campoDataFinalValidade"/>
+					<p:calendar id="campoDataFinalValidade" value="#{valorTarifaFormaArrecadacaoEditBean.entity.dataFinalValidade}" showButtonPanel="true" pattern="dd/MM/yyyy" label="#{msgs.campo_dataFinalValidade}" size="11" disabled="#{valorTarifaFormaArrecadacaoEditBean.editMode}"/>
+					<p:message for="campoDataFinalValidade" />
+					
+					<h:outputLabel value="#{msgs.campo_indicadorIndiceValorTarifa} (*): " for="campoIndicadorIndiceValorTarifa" />
+					<h:panelGroup>
+						<p:selectOneMenu id="campoIndicadorIndiceValorTarifa" converter="enumConverter" value="#{valorTarifaFormaArrecadacaoEditBean.entity.indicadorIndice}" label="#{msgs.campo_indicadorIndiceValorTarifa}">
+							<f:selectItem itemLabel="#{msgs.label_selecione}" />
+							<f:selectItems value="#{valorTarifaFormaArrecadacaoSearchBean.listaIndicadorIndiceValorTarifa}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:message for="campoIndicadorIndiceValorTarifa"/>
+
+					<h:outputLabel value="#{msgs.campo_valorTarifa} (*) : " for="campoValorTarifa" />
+					<p:inputText id="campoValorTarifa" value="#{valorTarifaFormaArrecadacaoEditBean.entity.valorTarifa}" converter="RealConverter" styleClass="alignRight" maxlength="15" style="width:90%"/>
+					<p:message for="campoValorTarifa"/>
+				
+			</h:panelGrid>
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+
+					<p:commandButton ajax="false" id="save" icon="ui-icon-disk"
+						value="#{!valorTarifaFormaArrecadacaoEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						action="#{valorTarifaFormaArrecadacaoEditBean.save}"
+						label="#{!valorTarifaFormaArrecadacaoEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						title="#{!valorTarifaFormaArrecadacaoEditBean.editMode ? msgs.action_incluir : msgs.action_alterar}"
+						styleClass="salvar" />
+
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton ajax="false" id="cancelar" icon="ui-icon-cancel"
+						value="#{msgs.action_voltar}" title="#{msgs.action_voltar}"
+						label="#{msgs.action_voltar}" action="#{valorTarifaFormaArrecadacaoEditBean.cancel}"
+						immediate="true" styleClass="sair" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+		</p:panel>
+		
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/layout.xhtml">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{!monitorarRemessaRetornoEditBean.editMode ? msgs.label_inclusao : msgs.label_edicao} #{msgs.label_de} #{msgs.campo_monitorarRemessaRetorno}" />
+	</ui:define>
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<f:event type="preRenderView" listener="#{monitorarRemessaRetornoEditBean.checkPermission}" />
+	
+		<h:form id="formEdicao" prependId="false">
+			
+		<h1 class="title ui-widget-header ui-corner-all"><h:outputText value="#{msgs.campo_monitorarRemessaRetorno}" /></h1>
+		
+		<p:panel id="panelItem" header="#{msgs.campo_tratar_ocorrencias}" footer="#{msgs.label_mensagem_obrigatorios}">
+		
+			<h:outputLabel  value="#{msgs.campo_arquivo}: "/>
+			<p:inputText value="#{monitorarRemessaRetornoEditBean.entity.codigo}" readonly="true" />
+			<p:inputText value="#{monitorarRemessaRetornoEditBean.entity.nome}" readonly="true" />
+		
+			<p:dataTable id="listaResultado" var="item" value="#{monitorarRemessaRetornoEditBean.dataModel}"
+				rows="#{linhaArquivoSearchBean.pageSize}" paginator="true" emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false">
+				
+				<p:column headerText="#{msgs.campo_numero_linha}">
+					<h:outputText value="#{item.numero}"/>
+				</p:column>
+				
+				<p:column headerText="#{msgs.campo_linha_arquivo}">
+					<h:outputText value="#{item.conteudoFormatado}" escape="false"/>
+				</p:column>
+				
+				<p:column headerText="#{msgs.campo_indicador_tratamento}">
+					<h:outputText value="#{monitorarRemessaRetornoEditBean.statusTratamento}"/>
+				</p:column>
+				
+				<p:column>
+					<p:commandButton disabled="#{!monitorarRemessaRetornoEditBean.isItemTratavel()}" 
+							actionListener="#{monitorarRemessaRetornoEditBean.startEditItem}"
+							icon="ui-icon-pencil" process="@this"
+							label="#{msgs.action_editar}" title="#{msgs.action_editar}"
+							update=":formEdicao:panelItem"/>
+							
+					<p:commandButton disabled="#{!monitorarRemessaRetornoEditBean.isLinhaArquivoComOcorrencia(item)}"
+							ajax="true" 
+							icon="ui-icon-alert"	
+							label="#{msgs.action_mostrar_ocorrencias_linha_arquivo}"
+							title="#{msgs.action_mostrar_ocorrencias_linha_arquivo}"
+							oncomplete="dlgOcorrenciasLinhaArquivo.show();"
+							update=":dialogOcorrenciasLinhaArquivo">
+							<f:setPropertyActionListener target="#{monitorarRemessaRetornoEditBean.linhaArquivoRejeitadoSelecionado}" value="#{item}" />
+					</p:commandButton>
+				</p:column>
+				
+			</p:dataTable>
+			
+			<p:separator style="margin:10px;" />
+			
+			<!-- #####################
+				TABELA DAS OCORRENCIAS
+			 ##################### -->
+			
+			<p:panel header="#{msgs.campo_ocorrencias_trataveis_da_linha}">
+			<p:dataTable id="listaOcorrencia" var="item" value="#{monitorarRemessaRetornoEditBean.listaOcorrenciaLinhaArquivo}"
+				paginator="false" emptyMessage="#{msgs.consulta_vazia}">
+				
+				<p:column headerText="#{msgs.campo_numero_linha}">
+					<h:outputText value="#{item.linhaArquivo.numero}"/>
+				</p:column>
+				
+				<p:column headerText="#{msgs.campo_campo}">
+					<h:outputText value="#{item.camposRegistroArqMov.registroTipoArquivo.codigo}#{item.camposRegistroArqMov.ordem}"/>
+				</p:column>
+				
+				<p:column headerText="#{msgs.campo_ocorrenciaArrecadacao}">
+					<h:outputText value="#{item.ocorrenciaFaseArrecadacao.ocorrenciaArrecadacao.descricao}"/>
+				</p:column>
+			</p:dataTable>
+			</p:panel>
+			
+			<p:separator style="margin:10px;" />
+			
+			<!-- ##################### 
+				FORMULARIO PARA AVALIACAO
+			 ##################### -->
+			
+			<p:panel header="#{msgs.campo_dados_linha_arquivo}">
+			<h:panelGrid columns="4" style="font-size: 12px; font-weight: bold;" styleClass="ui-widget">
+			
+				<h:outputLabel value="#{msgs.campo_numero_linha}: " for="numLinha"/>
+				<h:panelGroup>
+					<p:inputText id="numLinha" value="#{monitorarRemessaRetornoEditBean.item.numero}" maxlength="17" size="20" readonly="true"/>
+				</h:panelGroup>
+				<h:outputLabel value="" for="numLinha"/>
+				<p:message for="numLinha" showSummary="true" showDetail="false"/>
+			
+				<h:outputLabel value="#{msgs.campo_identificadorDebito} (*): " for="identificadorDebito"/>
+				<h:panelGroup>
+					<p:inputText id="identificadorDebito" value="#{monitorarRemessaRetornoEditBean.item.identificadorDebitoPCR}" maxlength="17" size="60"/>
+				</h:panelGroup>
+				<h:outputLabel value="#{monitorarRemessaRetornoEditBean.valorMonetario}" for="identificadorDebito">
+					<f:convertNumber type="currency" currencySymbol="R$" />
+				</h:outputLabel>
+				<p:message for="identificadorDebito" showSummary="true" showDetail="false"/>
+			
+				<h:outputLabel value="#{msgs.campo_alteracoes_realizadas} (*): " for="alteracoesRealizadas"/>
+				<h:panelGroup>
+					<p:inputTextarea id="alteracoesRealizadas" value="#{monitorarRemessaRetornoEditBean.item.descricaoAlteracoes}" cols="50"/>
+				</h:panelGroup>
+				<h:outputLabel value="" for="alteracoesRealizadas"/>
+				<p:message for="alteracoesRealizadas" showSummary="true" showDetail="false"/>
+			
+			</h:panelGrid>
+				
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:commandButton id="editItem" icon="ui-icon-disk"
+						value="#{msgs.action_salvar}"
+						label="#{msgs.action_salvar}"
+						title="#{msgs.action_salvar}"
+						actionListener="#{monitorarRemessaRetornoEditBean.updateItem}"
+						process="panelItem" update="panelItem,:globalMessagesPopup" />
+	
+					<p:spacer width="10" />
+	
+					<p:commandButton id="cancelItem" icon="ui-icon-cancel"
+						value="#{msgs.action_cancelar}"
+						label="#{msgs.action_cancelar}"
+						title="#{msgs.action_cancelar}" process="@this"
+						actionListener="#{monitorarRemessaRetornoEditBean.cancelItem}" update="panelItem" />
+						
+					<p:spacer width="10" />
+						
+					<p:commandButton id="visualizar" icon="ui-icon-search" disabled="#{monitorarRemessaRetornoEditBean.listaComposicaoIdentificador == null}"
+							ajax="true"
+							value="#{msgs.campo_composicaoIdentificadorDebitoPCR}" 
+							label="#{msgs.campo_composicaoIdentificadorDebitoPCR}"
+							title="#{msgs.campo_composicaoIdentificadorDebitoPCR}"
+							oncomplete="dlgComposicao.show();"
+							update=":formComposicao" />
+							
+				</p:toolbarGroup>
+			</p:toolbar>
+			
+			</p:panel>
+			
+			<!-- ##################### 
+				BOTOES FINALIZADORES
+			 ##################### -->
+			
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+
+					<p:commandButton ajax="true" id="tratamentoRealizado" icon="ui-icon-disk"
+						value="#{msgs.action_tratamento_realizado}"
+						action="#{monitorarRemessaRetornoEditBean.save}"
+						label="#{msgs.action_tratamento_realizado}"
+						title="#{msgs.action_tratamento_realizado}"
+						styleClass="salvar" />
+
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton ajax="false" id="cancelar" icon="ui-icon-cancel"
+						value="#{msgs.action_voltar}" title="#{msgs.action_voltar}"
+						label="#{msgs.action_voltar}" action="#{monitorarRemessaRetornoEditBean.cancel}"
+						immediate="true" styleClass="sair" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+		</p:panel>
+		
+		</h:form>
+		
+		<p:dialog id="dialogComposicao" header="#{msgs.campo_composicaoIdentificadorDebitoPCR}" widgetVar="dlgComposicao" 
+				resizable="false" modal="true" draggable="true">
+				<h:form id="formComposicao">
+					
+					<p:dataTable id="listaResultadoComposicao" var="item" value="#{monitorarRemessaRetornoEditBean.listaComposicaoIdentificador}" 
+						emptyMessage="#{msgs.consulta_vazia}">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_ordem}" />
+							</f:facet>
+							<h:outputText value="#{item.ordem}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_posicaoInicial}" />
+							</f:facet>
+							<h:outputText value="#{item.posicaoInicial}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_tamanho}" />
+							</f:facet>
+							<h:outputText value="#{item.tamanho}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_tipoCampo}" />
+							</f:facet>
+							<h:outputText value="#{item.tipoCampo.descricao}" />
+						</p:column>
+					
+					</p:dataTable>
+				
+				</h:form>
+			</p:dialog>
+			
+			<p:dialog id="dialogOcorrenciasLinhaArquivo" header="#{msgs.label_ocorrencias} #{msgs.label_de} #{msgs.campo_linha_arquivo}" 
+			widgetVar="dlgOcorrenciasLinhaArquivo" 
+				resizable="false" modal="true" draggable="false">
+				<h:form id="formRejeitados">
+					
+					<p:dataTable id="listaResultadoOcorrencias" var="item"	value="#{monitorarRemessaRetornoEditBean.ocorrenciasLinhaArquivo}" 
+						rows="10" paginator="true" emptyMessage="#{msgs.consulta_vazia}" paginatorAlwaysVisible="false">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_campoRegistroArqMov}" />
+							</f:facet>
+							<h:outputText value="#{item.camposRegistroArqMov.descricao}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_posicaoInicial}" />
+							</f:facet>
+							<h:outputText value="#{item.camposRegistroArqMov.posicaoInicial}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_tamanho}" />
+							</f:facet>
+							<h:outputText value="#{item.camposRegistroArqMov.tamanho}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_campo}" />
+							</f:facet>
+							<h:outputText value="#{item.camposRegistroArqMov.registroTipoArquivo.codigo}#{item.camposRegistroArqMov.ordem}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.campo_ocorrenciaArrecadacao}" />
+							</f:facet>
+							<h:outputText value="#{item.ocorrenciaFaseArrecadacao.ocorrenciaArrecadacao.descricao}" />
+						</p:column>
+					
+					</p:dataTable>
+				
+				</h:form>
+			</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

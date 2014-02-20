@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panel id="panelItem" rendered="#{composicaoIdentificadorDebitoPCREditBean.debitoSelecionado}">
+
+		<h:panelGrid columns="3" styleClass="formFields">
+		
+			<h:outputLabel value="#{msgs.campo_ordem} (*):" for="campoOrdem" />
+			<h:panelGroup>
+				<p:inputText id="campoOrdem" value="#{composicaoIdentificadorDebitoPCREditBean.item.ordem}" size="5" maxlength="10" disabled="true" /> 
+			</h:panelGroup>
+			<p:message for="campoOrdem" showSummary="true" showDetail="false"/>
+			
+			<h:outputLabel value="#{msgs.campo_posicaoInicial} (*):" for="campoPosicaoInicial" />
+			<h:panelGroup>
+				<p:inputText id="campoPosicaoInicial" value="#{composicaoIdentificadorDebitoPCREditBean.item.posicaoInicial}" label="#{msgs.campo_posicaoInicial}" size="5" maxlength="10" disabled="true" /> 
+			</h:panelGroup>
+			<p:message for="campoPosicaoInicial" showSummary="true" showDetail="false"/>
+			
+			<h:outputLabel value="#{msgs.campo_tamanho} (*):" for="campoTamanho" />
+			<h:panelGroup>
+				<p:inputText id="campoTamanho" value="#{composicaoIdentificadorDebitoPCREditBean.item.tamanho}" label="#{msgs.campo_tamanho}" size="5" maxlength="10" /> 
+			</h:panelGroup>
+			<p:message for="campoTamanho" showSummary="true" showDetail="false"/>
+			
+			<h:outputLabel value="#{msgs.campo_identificadorDeApropriacao} (*): " for="campoIdentificadorDeApropriacao" />
+			<h:panelGroup>
+				<h:panelGroup>
+					<p:selectOneRadio id="campoIdentificadorDeApropriacao" value="#{composicaoIdentificadorDebitoPCREditBean.item.identificadorDeApropriacao}" label="#{msgs.campo_identificadorDeApropriacao}:">
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+						<p:ajax update="panelIdentificadorApropriacao"/>  
+					</p:selectOneRadio>
+				</h:panelGroup>
+			</h:panelGroup>
+			<p:message for="campoIdentificadorDeApropriacao" />
+			
+			<h:outputLabel value="#{msgs.campo_posicaoIdentificadorDeApropriacao}: " for="campoPosicaoIdentificadorDeApropriacao" />
+			<h:panelGroup id="panelIdentificadorApropriacao">
+				<p:inputText id="campoPosicaoIdentificadorDeApropriacao" value="#{composicaoIdentificadorDebitoPCREditBean.item.posicaoIdentificadorDeApropriacao}" label="#{msgs.campo_posicaoIdentificadorDeApropriacao}" size="5" maxlength="10" disabled="#{!composicaoIdentificadorDebitoPCREditBean.identApropriacaoMarcado}" />
+			</h:panelGroup>
+			<p:message for="campoPosicaoIdentificadorDeApropriacao" />
+			
+			<h:outputLabel value="#{msgs.campo_tipoCampo} (*): " for="campoTipoCampo" />
+			<h:panelGroup>
+				<p:selectOneMenu id="campoTipoCampo" converter="enumConverter" value="#{composicaoIdentificadorDebitoPCREditBean.item.tipoCampo}" label="#{msgs.campo_tipoCampo}">
+					<f:selectItem itemLabel="#{msgs.label_selecione}" />
+					<f:selectItems value="#{composicaoIdentificadorDebitoPCRSearchBean.listaTipoCampo}" var="item" 
+					itemLabel="#{item.descricao}" itemValue="#{item}"/>  
+				</p:selectOneMenu>
+			</h:panelGroup>
+			<p:message for="campoTipoCampo"/>
+			
+			<h:outputLabel value="#{msgs.campo_formacaoIdDebito} (*): " for="campoFormacaoIdDebito" />
+			<h:panelGroup>
+				<h:panelGroup>
+					<p:selectOneRadio id="campoFormacaoIdDebito" value="#{composicaoIdentificadorDebitoPCREditBean.item.identificadorDeApropriacao}" label="#{msgs.campo_formacaoIdDebito}">
+						<f:selectItem itemLabel="#{msgs.action_sim}" itemValue="true" />
+						<f:selectItem itemLabel="#{msgs.action_nao}" itemValue="false" />
+					</p:selectOneRadio>
+				</h:panelGroup>
+			</h:panelGroup>
+			<p:message for="campoFormacaoIdDebito" />
+			
+			<h:outputLabel value="#{msgs.campo_ordemIdentificador}:" for="campoOrdemIdentificador" />
+			<h:panelGroup>
+				<p:inputText id="campoOrdemIdentificador" value="#{composicaoIdentificadorDebitoPCREditBean.item.ordemIdentificador}" label="#{msgs.campo_ordemIdentificador}" size="5" maxlength="5"/> 
+			</h:panelGroup>
+			<p:message for="campoOrdemIdentificador" showSummary="true" showDetail="false"/>
+
+		</h:panelGrid>
+
+		<p:toolbar>
+			<p:toolbarGroup align="left">
+
+				<p:commandButton id="addItem" icon="ui-icon-plus"
+					rendered="#{!composicaoIdentificadorDebitoPCREditBean.itemEditMode}"
+					value="#{msgs.action_adicionar}"
+					label="#{msgs.action_adicionar}"
+					title="#{msgs.action_adicionar}"
+					actionListener="#{composicaoIdentificadorDebitoPCREditBean.addItem}"
+					process="panelItem" update="panelItem,:globalMessagesPopup" />
+					
+				<p:commandButton id="editItem" icon="ui-icon-disk"
+					rendered="#{composicaoIdentificadorDebitoPCREditBean.itemEditMode}"
+					value="#{msgs.action_salvar}"
+					label="#{msgs.action_salvar}"
+					title="#{msgs.action_salvar}"
+					actionListener="#{composicaoIdentificadorDebitoPCREditBean.updateItem}"
+					process="panelItem" update="panelItem,:globalMessagesPopup" />
+
+				<p:spacer width="10" />
+
+				<p:commandButton id="cancelItem" icon="ui-icon-cancel"
+					value="#{msgs.action_cancelar}"
+					label="#{msgs.action_cancelar}"
+					title="#{msgs.action_cancelar}" process="@this"
+					actionListener="#{composicaoIdentificadorDebitoPCREditBean.cancelItem}" update="panelItem"
+					/>
+
+			</p:toolbarGroup>
+		</p:toolbar>
+
+		<br />
+		
+		<p:dataTable id="itemDataTable" var="item" value="#{composicaoIdentificadorDebitoPCREditBean.listaComposicao}" style="width:100%"  emptyMessage="#{msgs.consulta_vazia}" >
+			<f:facet name="header">
+				<f:facet name="header"><h:outputText value="#{msgs.label_lista_composicoes}" /> </f:facet>
+
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{msgs.campo_ordem}" />
+					</f:facet>
+					<h:outputText value="#{item.ordem}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{msgs.campo_posicaoInicial}" />
+					</f:facet>
+					<h:outputText value="#{item.posicaoInicial}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{msgs.campo_tamanho}" />
+					</f:facet>
+					<h:outputText value="#{item.tamanho}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{msgs.campo_tipoCampo}" />
+					</f:facet>
+					<h:outputText value="#{item.tipoCampo.descricao}" />
+				</p:column>
+				
+				<p:column style="width: 200px; text-align:center">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.label_acoes}" />
+					</f:facet>
+					
+					<p:commandButton actionListener="#{composicaoIdentificadorDebitoPCREditBean.removeItem}"
+						icon="ui-icon-trash" value="#{msgs.action_remover}" process="@this" 
+						label="#{msgs.action_remover}" title="#{msgs.action_remover}"
+						update=":formEdicao:panelItem, :globalMessagesPopup"/>
+
+				</p:column>
+
+			</f:facet>
+		</p:dataTable>
+
+	</p:panel>
+
+</ui:composition>
